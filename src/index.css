@@ -30,3 +30,12 @@ button, .button {
 }
 .primary { background: var(--accent); border-color: var(--accent); color: #fff; }
 button:disabled { opacity: .5; cursor: not-allowed; }
+
+.editor { width: 100%; max-width: 330px; display: flex; flex-direction: column; gap: 12px; }
+.editor-field { display: flex; flex-direction: column; gap: 4px; }
+.editor-field label { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; }
+.editor-count { font-weight: 400; color: #777; }
+.editor input, .editor textarea {
+  font: inherit; padding: 8px 12px; border: 2px solid #1d1d1f; border-radius: 10px; background: #fff; resize: vertical;
+}
+.editor input:focus, .editor textarea:focus { outline: 3px solid rgba(227, 53, 13, 0.35); outline-offset: 1px; }

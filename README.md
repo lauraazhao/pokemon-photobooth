@@ -26,7 +26,7 @@ Fonts: see `public/fonts/README.md`.
 
 1. ✅ Webcam preview + capture (3-second countdown, retake, download)
 2. ✅ Card from Figma ("basic water") with live person cutout on the card background, dithered like the Figma shader
-3. Editable card text
+3. ✅ Editable name, attack name and description after the photo (long text shrinks to fit)
 4. Background picker + upload
 5. Download polish + mobile layout
 6. Deploy (Vercel / Netlify)

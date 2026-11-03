@@ -44,6 +44,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
+  gap: 8px;
   padding-top: 8px;
 }
 .font-title {
@@ -55,7 +56,9 @@
   /* Comico only has capitals; this keeps the fallback font looking the same. */
   text-transform: uppercase;
 }
-.card-hp { display: flex; align-items: flex-end; gap: 4px; font-weight: 700; white-space: nowrap; }
+.card-name { flex: 1; min-width: 0; overflow: hidden; }
+.card-attack-name { flex: 0 1 auto; min-width: 0; overflow: hidden; text-align: center; }
+.card-hp { flex: none; display: flex; align-items: flex-end; gap: 4px; font-weight: 700; white-space: nowrap; }
 .card-hp-number { display: flex; align-items: flex-end; }
 .card-hp-label { font-size: 10px; line-height: normal; }
 .card-hp-value {
@@ -94,7 +97,8 @@
   overflow: hidden;
   padding: 20px 10px 10px;
 }
-.card-power { display: flex; align-items: center; justify-content: space-between; }
+.card-power { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.card-power-icon, .card-damage { flex: none; }
 .card-power-icon {
   width: 20px;
   height: 20px;
@@ -104,7 +108,7 @@
 }
 .card-power-icon img { width: 20px; height: 20px; display: block; }
 .card-damage { font-weight: 700; font-size: 14px; white-space: nowrap; }
-.card-attack-text { font-size: 11px; line-height: normal; }
+.card-attack-text { flex: 1; min-height: 0; overflow: hidden; font-size: 11px; line-height: normal; overflow-wrap: anywhere; white-space: pre-line; }
 
 .card-weakness {
   position: relative;

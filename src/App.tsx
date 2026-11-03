@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { toPng } from 'html-to-image'
 import type { ImageSegmenter } from '@mediapipe/tasks-vision'
 import Card from './components/Card'
+import CardTextEditor from './components/CardTextEditor'
 import { DEFAULT_CARD } from './lib/cardData'
 import { useCamera } from './lib/useCamera'
 import { cutOutPerson, loadSegmenter } from './lib/segmenter'
@@ -27,6 +28,7 @@ export default function App() {
   const [mode, setMode] = useState<Mode>('live')
   const [countdown, setCountdown] = useState<number | null>(null)
   const [saving, setSaving] = useState(false)
+  const [cardData, setCardData] = useState(DEFAULT_CARD)
 
   useEffect(() => {
     const img = new Image()
@@ -119,7 +121,7 @@ export default function App() {
     <main>
       <h1>Card Photobooth</h1>
       <div className="stage">
-        <Card ref={cardRef} data={DEFAULT_CARD} photoRef={photoRef} />
+        <Card ref={cardRef} data={cardData} photoRef={photoRef} />
         {countdown !== null && <div className="countdown">{countdown}</div>}
       </div>
       {mode === 'live' && cameraMessage && <p className="notice">{cameraMessage}</p>}
@@ -128,6 +130,7 @@ export default function App() {
           {segmenterError ? 'Background removal is unavailable in this browser.' : 'Loading background removal…'}
         </p>
       )}
+      {mode === 'captured' && <CardTextEditor data={cardData} onChange={setCardData} />}
       <div className="actions">
         {mode === 'live' ? (
           <button className="primary" onClick={takePhoto} disabled={status !== 'live' || countdown !== null}>

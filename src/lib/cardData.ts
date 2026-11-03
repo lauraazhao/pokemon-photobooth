@@ -1,4 +1,4 @@
-/** Everything on the card that will become editable in milestone 3. */
+/** All the text on the card. */
 export interface CardData {
   stage: string
   name: string
@@ -20,3 +20,10 @@ export const DEFAULT_CARD: CardData = {
   weakness: '+20',
   footer: '2026 @ laurazhao.com',
 }
+
+/** Fields people can edit after taking their photo, with limits that fit the card layout. */
+export const EDITABLE_FIELDS = [
+  { key: 'name', label: 'Name', maxLength: 18, multiline: false },
+  { key: 'attackName', label: 'Attack', maxLength: 18, multiline: false },
+  { key: 'attackText', label: 'Description', maxLength: 160, multiline: true },
+] as const satisfies readonly { key: keyof CardData; label: string; maxLength: number; multiline: boolean }[]
