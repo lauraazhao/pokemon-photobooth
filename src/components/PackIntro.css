@@ -1,15 +1,28 @@
-.pack-intro { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+.pack-intro { display: flex; flex-direction: column; align-items: center; gap: 28px; }
+
+.pack-prompt { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
+.pack-prompt strong { font-size: 1.25rem; }
+.pack-prompt span { color: #666; }
+.pack-ripped .pack-prompt, .pack-fading .pack-prompt { opacity: 0; transition: opacity 0.3s; }
 
 .pack {
   position: relative;
   width: min(392px, calc(100vw - 32px));
   filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.25));
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  /* Horizontal swipes go to the pack; vertical ones still scroll the page. */
+  touch-action: pan-y;
+  outline-offset: 6px;
 }
+.pack-dragging .pack { cursor: grabbing; }
 .pack-layer {
   position: absolute;
   inset: 0;
   background-size: 100% 100%;
   background-repeat: no-repeat;
+  pointer-events: none;
 }
 
 /* Idle: a gentle float so it looks like it wants to be opened. */
@@ -19,26 +32,48 @@
   50% { transform: translateY(-6px) rotate(1deg); }
 }
 
-/* Ripping: a quick shake, then the top strip tears off up and to the right. */
-.pack-ripping .pack, .pack-fading .pack { animation: pack-shake 0.3s ease-in-out; }
-@keyframes pack-shake {
-  0%, 100% { transform: rotate(0); }
-  25% { transform: rotate(-2deg); }
-  75% { transform: rotate(2deg); }
+/* The top strip follows the finger while dragging, springs back if released early,
+   and flies off once ripped. */
+.pack-top { transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.3, 1.2), opacity 0.5s; }
+.pack-dragging .pack-top { transition: none; }
+.pack-ripped .pack-top, .pack-fading .pack-top {
+  opacity: 0;
+  transition: transform 0.55s cubic-bezier(0.3, 0, 0.6, 1), opacity 0.55s ease-in;
 }
-.pack-ripping .pack-top, .pack-fading .pack-top {
-  transform-origin: 0% 4%;
-  animation: pack-tear 0.6s cubic-bezier(0.3, 0, 0.6, 1) 0.3s forwards;
+
+/* Swipe hint: a dashed line along the seam with a finger sliding across it. */
+.pack-hint { position: absolute; left: 6%; right: 6%; top: var(--seam); pointer-events: none; transition: opacity 0.2s; }
+.pack-hint-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -1px;
+  border-top: 2px dashed rgba(255, 255, 255, 0.95);
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
 }
-@keyframes pack-tear {
-  0% { transform: translate(0, 0) rotate(0); opacity: 1; }
-  35% { transform: translate(6px, -6px) rotate(-4deg); opacity: 1; }
-  100% { transform: translate(140px, -90px) rotate(-28deg); opacity: 0; }
+.pack-hint-finger {
+  position: absolute;
+  top: -14px;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  margin-left: -14px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 3px solid #e3350d;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  animation: pack-swipe 1.8s ease-in-out infinite;
 }
+@keyframes pack-swipe {
+  0% { left: 0%; opacity: 0; transform: scale(0.8); }
+  15% { opacity: 1; transform: scale(1); }
+  75% { left: 100%; opacity: 1; transform: scale(1); }
+  100% { left: 100%; opacity: 0; transform: scale(0.8); }
+}
+.pack-dragging .pack-hint, .pack-ripped .pack-hint, .pack-fading .pack-hint { opacity: 0; }
 
 /* Fading: the opened pack fades away. */
 .pack-fading .pack-body { animation: pack-fade 0.6s ease-in forwards; }
-.pack-fading > button { opacity: 0; transition: opacity 0.3s; }
 @keyframes pack-fade {
   to { opacity: 0; transform: scale(1.04) translateY(10px); }
 }

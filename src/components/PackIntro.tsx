@@ -1,14 +1,17 @@
-import { useState } from 'react'
+import { useRef, useState, type CSSProperties, type PointerEvent } from 'react'
 import packUrl from '../assets/pack/card-pack.png'
 import './PackIntro.css'
 
 /** Pack size in Figma ("card pack", node 843:16734). */
 const PACK_W = 392
 const PACK_H = 571
-/** The tear runs just under the striped top seam (21px tall in Figma). */
-const SEAM_Y = 24
+/** The tear runs right under the hole punch (which ends at y = 51 in Figma). */
+const SEAM_Y = 60
+const SEAM_PCT = (SEAM_Y / PACK_H) * 100
+/** How far (as a share of the pack width) a swipe must travel to rip it open. */
+const RIP_DISTANCE = 0.55
 
-type Phase = 'idle' | 'ripping' | 'fading'
+type Phase = 'idle' | 'dragging' | 'ripped' | 'fading'
 
 /** Jagged tear line across the pack, as [x%, y%] points from left to right. */
 function tearLine(): [number, number][] {
@@ -23,43 +26,105 @@ function tearLine(): [number, number][] {
 }
 
 const TEAR = tearLine()
+const pt = ([x, y]: [number, number]) => `${x.toFixed(2)}% ${y.toFixed(2)}%`
 // The top strip and the body share the same jagged edge.
-const TOP_CLIP = `polygon(0% 0%, 100% 0%, ${[...TEAR].reverse().map((p) => pt(p)).join(', ')})`
-const BODY_CLIP = `polygon(${TEAR.map((p) => pt(p)).join(', ')}, 100% 100%, 0% 100%)`
-
-function pt([x, y]: [number, number]) {
-  return `${x.toFixed(2)}% ${y.toFixed(2)}%`
-}
+const TOP_CLIP = `polygon(0% 0%, 100% 0%, ${[...TEAR].reverse().map(pt).join(', ')})`
+const BODY_CLIP = `polygon(${TEAR.map(pt).join(', ')}, 100% 100%, 0% 100%)`
 
 interface Props {
   /** Called once the pack has ripped and faded out. */
   onOpened: () => void
 }
 
-/** The sealed card pack shown when the photobooth starts. */
+/**
+ * The sealed card pack shown when the photobooth starts. Swipe across the
+ * seam (either direction) to rip the top off; the strip peels up as you drag.
+ */
 export default function PackIntro({ onOpened }: Props) {
   const [phase, setPhase] = useState<Phase>('idle')
+  const [progress, setProgress] = useState(0)
+  const [dir, setDir] = useState<1 | -1>(1)
+  const drag = useRef<{ id: number; startX: number; width: number } | null>(null)
 
-  const rip = () => {
-    if (phase !== 'idle') return
+  const finish = (direction: 1 | -1) => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    setPhase('ripping')
-    // Timings match the CSS animations in PackIntro.css.
-    setTimeout(() => setPhase('fading'), reduced ? 0 : 900)
-    setTimeout(onOpened, reduced ? 0 : 1500)
+    drag.current = null
+    setDir(direction)
+    setProgress(1)
+    setPhase('ripped')
+    // Timings match the transitions in PackIntro.css.
+    setTimeout(() => setPhase('fading'), reduced ? 0 : 550)
+    setTimeout(onOpened, reduced ? 0 : 1150)
   }
 
-  const layer = { backgroundImage: `url(${packUrl})` }
+  const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
+    if (phase !== 'idle') return
+    e.currentTarget.setPointerCapture(e.pointerId)
+    drag.current = { id: e.pointerId, startX: e.clientX, width: e.currentTarget.getBoundingClientRect().width }
+    setPhase('dragging')
+  }
+
+  const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
+    const d = drag.current
+    if (!d || d.id !== e.pointerId) return
+    const dx = e.clientX - d.startX
+    const p = Math.min(1, Math.abs(dx) / (d.width * RIP_DISTANCE))
+    const direction = dx >= 0 ? 1 : -1
+    if (p >= 1) return finish(direction)
+    setDir(direction)
+    setProgress(p)
+  }
+
+  const onPointerEnd = (e: PointerEvent<HTMLDivElement>) => {
+    const d = drag.current
+    if (!d || d.id !== e.pointerId) return
+    // Not far enough: the strip settles back into place.
+    drag.current = null
+    setProgress(0)
+    setPhase('idle')
+  }
+
+  // The torn strip pivots on the end that is still attached.
+  const topStyle: CSSProperties = {
+    backgroundImage: `url(${packUrl})`,
+    clipPath: TOP_CLIP,
+    transformOrigin: `${dir === 1 ? 100 : 0}% ${SEAM_PCT}%`,
+    transform:
+      phase === 'ripped' || phase === 'fading'
+        ? `translate(${dir * 150}px, -110px) rotate(${dir * 30}deg)`
+        : `translateY(${-3 * progress}px) rotate(${dir * 7 * progress}deg)`,
+  }
 
   return (
     <div className={`pack-intro pack-${phase}`}>
-      <div className="pack" style={{ aspectRatio: `${PACK_W} / ${PACK_H}` }} role="img" aria-label="Sealed Photomon card pack">
-        <div className="pack-layer pack-body" style={{ ...layer, clipPath: BODY_CLIP }} />
-        <div className="pack-layer pack-top" style={{ ...layer, clipPath: TOP_CLIP }} />
+      <p className="pack-prompt">
+        <strong>Rip open the pack to start</strong>
+        <span>Swipe across the top of the pack</span>
+      </p>
+      <div
+        className="pack"
+        style={{ aspectRatio: `${PACK_W} / ${PACK_H}`, '--seam': `${SEAM_PCT}%` } as CSSProperties}
+        role="button"
+        tabIndex={0}
+        aria-label="Rip open the pack (swipe across the top, or press Enter)"
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerEnd}
+        onPointerCancel={onPointerEnd}
+        onKeyDown={(e) => {
+          if (phase === 'idle' && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault()
+            finish(1)
+          }
+        }}
+      >
+        <div className="pack-layer pack-body" style={{ backgroundImage: `url(${packUrl})`, clipPath: BODY_CLIP }} />
+        <div className="pack-layer pack-top" style={topStyle} />
+        <div className="pack-hint" aria-hidden="true">
+          <div className="pack-hint-line" />
+          <div className="pack-hint-finger" />
+        </div>
       </div>
-      <button className="primary" onClick={rip} disabled={phase !== 'idle'}>
-        Rip open
-      </button>
     </div>
   )
 }
