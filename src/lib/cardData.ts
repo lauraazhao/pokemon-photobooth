@@ -21,9 +21,9 @@ export const DEFAULT_CARD: CardData = {
   footer: '2026 @ laurazhao.com',
 }
 
-/** Fields people can edit after taking their photo, with limits that fit the card layout. */
-export const EDITABLE_FIELDS = [
-  { key: 'name', label: 'Name', maxLength: 18, multiline: false },
-  { key: 'attackName', label: 'Attack', maxLength: 18, multiline: false },
-  { key: 'attackText', label: 'Description', maxLength: 160, multiline: true },
-] as const satisfies readonly { key: keyof CardData; label: string; maxLength: number; multiline: boolean }[]
+/** Text people can edit on the card after taking their photo, with limits that fit the layout. */
+export const EDITABLE_LIMITS = {
+  name: { label: 'Card name', maxLength: 18, multiline: false },
+  attackName: { label: 'Attack name', maxLength: 18, multiline: false },
+  attackText: { label: 'Attack description', maxLength: 160, multiline: true },
+} as const

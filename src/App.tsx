@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { toPng } from 'html-to-image'
 import type { ImageSegmenter } from '@mediapipe/tasks-vision'
 import Card from './components/Card'
-import CardTextEditor from './components/CardTextEditor'
 import { DEFAULT_CARD } from './lib/cardData'
 import { useCamera } from './lib/useCamera'
 import { cutOutPerson, loadSegmenter } from './lib/segmenter'
@@ -96,7 +95,11 @@ export default function App() {
 
   const download = useCallback(async () => {
     if (!cardRef.current) return
+    // Finish any edit so the caret isn't in the picture.
+    ;(document.activeElement as HTMLElement | null)?.blur()
     setSaving(true)
+    // Wait for the card to re-render without the edit outlines.
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
     try {
       const url = await toPng(cardRef.current, { pixelRatio: SCALE, cacheBust: true })
       const a = document.createElement('a')
@@ -121,7 +124,13 @@ export default function App() {
     <main>
       <h1>Card Photobooth</h1>
       <div className="stage">
-        <Card ref={cardRef} data={cardData} photoRef={photoRef} />
+        <Card
+          ref={cardRef}
+          data={cardData}
+          photoRef={photoRef}
+          editable={mode === 'captured' && !saving}
+          onChange={setCardData}
+        />
         {countdown !== null && <div className="countdown">{countdown}</div>}
       </div>
       {mode === 'live' && cameraMessage && <p className="notice">{cameraMessage}</p>}
@@ -130,7 +139,7 @@ export default function App() {
           {segmenterError ? 'Background removal is unavailable in this browser.' : 'Loading background removal…'}
         </p>
       )}
-      {mode === 'captured' && <CardTextEditor data={cardData} onChange={setCardData} />}
+      {mode === 'captured' && <p className="notice">Tap the name, attack or description to edit it.</p>}
       <div className="actions">
         {mode === 'live' ? (
           <button className="primary" onClick={takePhoto} disabled={status !== 'live' || countdown !== null}>
