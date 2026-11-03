@@ -16,8 +16,8 @@ Open the printed localhost URL. The camera only works on `localhost` or over HTT
 ## How the card photo works
 
 - `src/lib/segmenter.ts`: MediaPipe selfie segmentation cuts the person out of each camera frame, in the browser.
-- `src/lib/photoArea.ts`: draws the "photobooth picture" layer: water background at 75%, blue-to-white overlay at 50%, the person on top, and the metallic 4px frame.
-- `src/lib/dither.ts`: a port of the Figma Dither shader (Bayer 16×16, 2 levels). Set `DITHER = false` in `App.tsx` to turn it off.
+- `src/lib/photoArea.ts`: draws the "photobooth picture" layer: water background at 75%, blue-to-white overlay at 50%, and the metallic 4px frame, then the person on top.
+- `src/lib/dither.ts`: a port of the Figma Dither shader (Bayer 16×16, 2 levels), applied to the background and frame only, so the person stays sharp. Set `DITHER = false` in `App.tsx` to turn it off.
 - `src/components/Card.tsx`: the rest of the card, built from the Figma frame. Download uses `html-to-image`.
 
 Fonts: see `public/fonts/README.md`.

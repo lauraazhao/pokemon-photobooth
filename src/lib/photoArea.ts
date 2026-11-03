@@ -1,6 +1,7 @@
 // Draws the "photobooth picture" layer of the card onto a canvas:
-// background photo (75%) + blue-to-white overlay (50%) + the person cutout,
-// framed by the 4px metallic outside stroke, then dithered like in Figma.
+// background photo (75%) + blue-to-white overlay (50%), framed by the 4px
+// metallic outside stroke, dithered like in Figma. The person cutout is drawn
+// on top afterwards so they stay sharp (not dithered).
 import { ditherImageData } from './dither'
 import { figmaLinearGradient, type Transform2x3 } from './figmaGradient'
 
@@ -74,6 +75,7 @@ export interface PhotoAreaOptions {
   mirror: boolean
   /** Device pixels per CSS pixel to render at. */
   scale: number
+  /** Dither the background and frame (the person is never dithered). */
   dither: boolean
 }
 
@@ -93,7 +95,7 @@ export function renderPhotoArea(canvas: HTMLCanvasElement, o: PhotoAreaOptions) 
   const ih = PHOTO_H * s
   const off = PHOTO_STROKE * s
 
-  // Inside the frame: background photo, overlay, then person on top.
+  // Inside the frame: background photo, then overlay.
   ctx.save()
   ctx.translate(off, off)
   ctx.beginPath()
@@ -110,7 +112,6 @@ export function renderPhotoArea(canvas: HTMLCanvasElement, o: PhotoAreaOptions) 
   ctx.fillStyle = figmaLinearGradient(ctx, OVERLAY_TRANSFORM, OVERLAY_STOPS)
   ctx.fillRect(0, 0, 1, 1)
   ctx.restore()
-  if (o.person) drawCover(ctx, o.person, iw, ih, o.mirror)
   ctx.restore()
 
   // Metallic 4px stroke outside the layer bounds.
@@ -130,5 +131,16 @@ export function renderPhotoArea(canvas: HTMLCanvasElement, o: PhotoAreaOptions) 
     const img = ctx.getImageData(0, 0, W, H)
     ditherImageData(img)
     ctx.putImageData(img, 0, 0)
+  }
+
+  // The person goes on top of the dithered background, clipped to the frame.
+  if (o.person) {
+    ctx.save()
+    ctx.translate(off, off)
+    ctx.beginPath()
+    ctx.rect(0, 0, iw, ih)
+    ctx.clip()
+    drawCover(ctx, o.person, iw, ih, o.mirror)
+    ctx.restore()
   }
 }

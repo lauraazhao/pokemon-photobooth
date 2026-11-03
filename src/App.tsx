@@ -10,7 +10,7 @@ import photoBgUrl from './assets/card/photo-bg.jpg'
 
 /** Render scale for the dithered photo. Also used for the downloaded PNG. */
 const SCALE = Math.max(2, Math.ceil(window.devicePixelRatio || 1))
-/** Set to false to turn off the Figma dither effect on the photo. */
+/** Set to false to turn off the Figma dither effect on the photo background. */
 const DITHER = true
 
 type Mode = 'live' | 'captured'
