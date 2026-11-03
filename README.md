@@ -11,10 +11,21 @@ npm run dev
 
 Open the printed localhost URL. The camera only works on `localhost` or over HTTPS.
 
+`npm install` also copies the MediaPipe runtime into `public/mediapipe` (used for the person cutout).
+
+## How the card photo works
+
+- `src/lib/segmenter.ts`: MediaPipe selfie segmentation cuts the person out of each camera frame, in the browser.
+- `src/lib/photoArea.ts`: draws the "photobooth picture" layer: water background at 75%, blue-to-white overlay at 50%, the person on top, and the metallic 4px frame.
+- `src/lib/dither.ts`: a port of the Figma Dither shader (Bayer 16×16, 2 levels). Set `DITHER = false` in `App.tsx` to turn it off.
+- `src/components/Card.tsx`: the rest of the card, built from the Figma frame. Download uses `html-to-image`.
+
+Fonts: see `public/fonts/README.md`.
+
 ## Roadmap
 
 1. ✅ Webcam preview + capture (3-second countdown, retake, download)
-2. Composite the photo into the card frame exported from Figma
+2. ✅ Card from Figma ("basic water") with live person cutout on the card background, dithered like the Figma shader
 3. Editable card text
 4. Background picker + upload
 5. Download polish + mobile layout

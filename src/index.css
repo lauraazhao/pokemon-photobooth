@@ -16,25 +16,13 @@ main {
   gap: 16px;
 }
 h1 { margin: 0; font-size: 1.75rem; }
-.camera, .result { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.viewport {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  background: #222;
-  border-radius: 12px;
-  overflow: hidden;
-}
-video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-.result img { width: 100%; border-radius: 12px; }
-.notice {
-  position: absolute; inset: 0; margin: 0; padding: 24px;
-  display: grid; place-items: center; text-align: center; color: #fff;
-}
+.stage { position: relative; }
 .countdown {
   position: absolute; inset: 0; display: grid; place-items: center;
   font-size: 6rem; font-weight: 700; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.5);
+  pointer-events: none;
 }
+.notice { margin: 0; text-align: center; color: #555; }
 .actions { display: flex; gap: 12px; }
 button, .button {
   font: inherit; font-weight: 600; padding: 12px 24px; border-radius: 999px;
