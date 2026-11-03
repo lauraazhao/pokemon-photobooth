@@ -3,6 +3,7 @@ import { toPng } from 'html-to-image'
 import type { ImageSegmenter } from '@mediapipe/tasks-vision'
 import Card from './components/Card'
 import CardTextEditor from './components/CardTextEditor'
+import PackIntro from './components/PackIntro'
 import { DEFAULT_CARD } from './lib/cardData'
 import { useCamera } from './lib/useCamera'
 import { cutOutPerson, loadSegmenter } from './lib/segmenter'
@@ -16,7 +17,7 @@ const DITHER = true
 
 type Mode = 'live' | 'captured'
 
-export default function App() {
+function Booth() {
   const { videoRef, status } = useCamera()
   const cardRef = useRef<HTMLDivElement>(null)
   const photoRef = useRef<HTMLCanvasElement>(null)
@@ -118,9 +119,8 @@ export default function App() {
           : null
 
   return (
-    <main>
-      <h1>Card Photobooth</h1>
-      <div className="workspace">
+    <>
+      <div className="workspace fade-in">
         <section className="booth">
           <div className="stage">
             <Card ref={cardRef} data={cardData} photoRef={photoRef} />
@@ -149,6 +149,20 @@ export default function App() {
         </section>
         {mode === 'captured' && <CardTextEditor data={cardData} onChange={setCardData} />}
       </div>
+    </>
+  )
+}
+
+export default function App() {
+  const [opened, setOpened] = useState(false)
+  useEffect(() => {
+    // Start downloading the cutout model while the pack is on screen.
+    loadSegmenter().catch(() => {})
+  }, [])
+  return (
+    <main>
+      <h1>Card Photobooth</h1>
+      {opened ? <Booth /> : <PackIntro onOpened={() => setOpened(true)} />}
     </main>
   )
 }
