@@ -160,14 +160,3 @@
   font-weight: 700;
   font-style: italic;
 }
-
-/* In-place editing after the photo is taken. */
-.card-editable [contenteditable] {
-  cursor: text;
-  border-radius: 3px;
-  outline: 1.5px dashed transparent;
-  outline-offset: 2px;
-  transition: outline-color 0.15s;
-}
-.card-editable [contenteditable]:hover { outline-color: rgba(255, 255, 255, 0.7); }
-.card-editable [contenteditable]:focus { outline: 2px solid #fff; background: rgba(255, 255, 255, 0.15); }

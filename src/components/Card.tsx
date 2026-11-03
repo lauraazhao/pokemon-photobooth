@@ -2,40 +2,30 @@ import { forwardRef, type Ref } from 'react'
 import { PHOTO_H, PHOTO_STROKE, PHOTO_W } from '../lib/photoArea'
 import typeIcon from '../assets/card/type-lightning.png'
 import weaknessIcon from '../assets/card/type-fire.png'
-import { EDITABLE_LIMITS, type CardData } from '../lib/cardData'
-import EditableText from './EditableText'
+import type { CardData } from '../lib/cardData'
 import { useFitText } from '../lib/useFitText'
 import './Card.css'
 
 interface CardProps {
   data: CardData
   photoRef: Ref<HTMLCanvasElement>
-  /** When true, the name, attack name and description can be edited in place. */
-  editable?: boolean
-  onChange?: (data: CardData) => void
 }
 
 /** The "basic water" card from Figma (node 847:17182), 330 × 460. */
-const Card = forwardRef<HTMLDivElement, CardProps>(function Card({ data, photoRef, editable = false, onChange }, ref) {
+const Card = forwardRef<HTMLDivElement, CardProps>(function Card({ data, photoRef }, ref) {
   // Long text shrinks to fit instead of pushing the layout around.
   const nameRef = useFitText<HTMLParagraphElement>(data.name, 16, 9, 'width')
   const attackRef = useFitText<HTMLParagraphElement>(data.attackName, 16, 9, 'width')
   const textRef = useFitText<HTMLParagraphElement>(data.attackText, 11, 7, 'height')
-  const field = (key: keyof typeof EDITABLE_LIMITS) => ({
-    value: data[key],
-    editable,
-    maxLength: EDITABLE_LIMITS[key].maxLength,
-    multiline: EDITABLE_LIMITS[key].multiline,
-    label: EDITABLE_LIMITS[key].label,
-    onChange: (v: string) => onChange?.({ ...data, [key]: v }),
-  })
   return (
-    <div className={editable ? 'card card-editable' : 'card'} ref={ref}>
+    <div className="card" ref={ref}>
       <div className="card-border">
         <div className="card-bg">
           <div className="card-stats">
             <div className="card-header">
-              <EditableText className="font-title card-name" elRef={nameRef} {...field('name')} />
+              <p className="font-title card-name" ref={nameRef}>
+                {data.name}
+              </p>
               <div className="card-hp">
                 <span className="card-hp-number">
                   <span className="card-hp-label">HP</span>
@@ -62,10 +52,14 @@ const Card = forwardRef<HTMLDivElement, CardProps>(function Card({ data, photoRe
               <div className="card-power-icon">
                 <img src={typeIcon} alt="" />
               </div>
-              <EditableText className="font-title card-attack-name" elRef={attackRef} {...field('attackName')} />
+              <p className="font-title card-attack-name" ref={attackRef}>
+                {data.attackName}
+              </p>
               <p className="card-damage">{data.attackDamage}</p>
             </div>
-            <EditableText className="card-attack-text" elRef={textRef} {...field('attackText')} />
+            <p className="card-attack-text" ref={textRef}>
+              {data.attackText}
+            </p>
           </div>
           <div className="card-weakness">
             <span>weakness</span>
