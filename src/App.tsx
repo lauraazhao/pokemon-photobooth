@@ -147,7 +147,7 @@ export default function App() {
             )}
           </div>
         </section>
-        <CardTextEditor data={cardData} onChange={setCardData} disabled={mode !== 'captured'} />
+        {mode === 'captured' && <CardTextEditor data={cardData} onChange={setCardData} />}
       </div>
     </main>
   )

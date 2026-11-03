@@ -3,18 +3,16 @@ import { EDITABLE_FIELDS, type CardData } from '../lib/cardData'
 interface Props {
   data: CardData
   onChange: (data: CardData) => void
-  /** Fields are locked until the photo is taken. */
-  disabled: boolean
 }
 
-/** Side panel for editing the card text. Edits update the card live. */
-export default function CardTextEditor({ data, onChange, disabled }: Props) {
+/** Side panel for editing the card text, shown after the photo is taken. Edits update the card live. */
+export default function CardTextEditor({ data, onChange }: Props) {
   return (
     <aside className="panel" aria-label="Edit card text">
       <h2>Edit card</h2>
-      <p className="panel-hint">{disabled ? 'Take your photo first, then edit the text here.' : 'Changes show on the card as you type.'}</p>
+      <p className="panel-hint">Changes show on the card as you type.</p>
       <form className="editor" onSubmit={(e) => e.preventDefault()}>
-        <fieldset disabled={disabled}>
+        <fieldset>
       {EDITABLE_FIELDS.map((f) => {
         const value = data[f.key]
         const props = {
