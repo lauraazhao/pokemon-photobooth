@@ -19,10 +19,12 @@
   background: #070b24;
 }
 * { box-sizing: border-box; }
+/* The page scrolls on html, so body can clip decorations (like the black band under the camera) at the bottom of the page. */
+html { overflow-x: hidden; }
 body {
   margin: 0;
   min-height: 100vh;
-  overflow-x: clip;
+  overflow: clip;
 }
 /* Dithered starfield, darkened a touch at the top and bottom so text stays readable.
    On a fixed layer of its own so it can stay pixel-crisp without affecting the cards. */
@@ -61,7 +63,36 @@ h1 { margin: 0; font-size: 1.75rem; }
   white-space: nowrap;
 }
 .logo img { display: block; width: min(420px, 85vw); height: auto; }
-.stage { position: relative; }
+.stage { position: relative; flex: none; transform-origin: top center; transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+/* Frames the card. Zoomed while posing: shows the top of the card bigger, cropped below the photo. */
+.stage-view {
+  --zoom: 1.3;
+  display: flex;
+  justify-content: center;
+  width: var(--card-w);
+  height: var(--card-h);
+  overflow: hidden;
+  border-radius: 18px;
+  transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.stage-view:not(.zoomed) { overflow: visible; }
+.stage-view.zoomed { width: min(calc(var(--card-w) * var(--zoom)), calc(100vw - 16px)); height: calc(var(--focus-h) * var(--zoom)); }
+.stage-view.zoomed .stage { transform: scale(var(--zoom)); }
+@media (prefers-reduced-motion: reduce) { .stage, .stage-view { transition: none; } }
+/* While posing, everything from the camera button down sits on solid black. */
+.camera-dock { position: relative; isolation: isolate; padding: 8px 0 24px; }
+.camera-dock::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: -32px;
+  left: 50%;
+  width: 100vw;
+  height: 300vh;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0), #000 32px);
+  pointer-events: none;
+}
 .countdown {
   position: absolute; inset: 0; display: grid; place-items: center;
   font-size: 6rem; font-weight: 700; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.5);

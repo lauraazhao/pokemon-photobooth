@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import type { ImageSegmenter } from '@mediapipe/tasks-vision'
 import Card from './components/Card'
 import CardTextEditor from './components/CardTextEditor'
@@ -239,9 +239,21 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
     <>
       <div className="workspace fade-in">
         <section className="booth">
-          <div className="stage">
-            <Card ref={cardRef} template={template} data={cardData} photoRef={photoRef} />
-            {countdown !== null && <div className="countdown">{countdown}</div>}
+          {/* While posing, the card is zoomed in on its top half so people can see themselves. */}
+          <div
+            className={mode === 'live' ? 'stage-view zoomed' : 'stage-view'}
+            style={
+              {
+                '--card-w': `${template.width}px`,
+                '--card-h': `${template.height}px`,
+                '--focus-h': `${template.photo.y + template.photo.h + 16}px`,
+              } as CSSProperties
+            }
+          >
+            <div className="stage">
+              <Card ref={cardRef} template={template} data={cardData} photoRef={photoRef} />
+              {countdown !== null && <div className="countdown">{countdown}</div>}
+            </div>
           </div>
           {mode === 'live' && cameraMessage && (
             <p className={status === 'starting' ? 'notice notice-display' : 'notice'}>{cameraMessage}</p>
@@ -252,7 +264,7 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
             </p>
           )}
           {mode === 'captured' && <EffectBar base={photoBase} value={effect} onChange={setEffect} version={shot} />}
-          <div className="actions">
+          <div className={mode === 'live' ? 'actions camera-dock' : 'actions'}>
             {mode === 'live' ? (
               <button className="capture-button" onClick={takePhoto} disabled={status !== 'live' || countdown !== null}>
                 <span className="capture-icon" aria-hidden="true">
