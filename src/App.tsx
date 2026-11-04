@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import type { ImageSegmenter } from '@mediapipe/tasks-vision'
 import Card from './components/Card'
 import CardTextEditor from './components/CardTextEditor'
@@ -68,6 +68,22 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
   const [saving, setSaving] = useState(false)
   const [cardData, setCardData] = useState(() => cardDataFor(template))
   const [effect, setEffect] = useState<EffectId>('none')
+  // How big the card is while posing: as big as fits above the camera button (up to 1.6×).
+  const viewRef = useRef<HTMLDivElement>(null)
+  const [zoom, setZoom] = useState(1)
+  useLayoutEffect(() => {
+    const fit = () => {
+      const top = viewRef.current ? viewRef.current.getBoundingClientRect().top + window.scrollY : 200
+      // Leave room for the camera button and its label below the card.
+      const byHeight = (window.innerHeight - top - 175) / template.height
+      const byWidth = (window.innerWidth - 16) / template.width
+      // On short phone screens the card shrinks a little so the button stays on screen.
+      setZoom(Math.max(0.75, Math.min(1.6, byHeight, byWidth)))
+    }
+    fit()
+    window.addEventListener('resize', fit)
+    return () => window.removeEventListener('resize', fit)
+  }, [template])
   // Bumped on every capture so the effect previews redraw with the new photo.
   const [shot, setShot] = useState(0)
   // The captured camera frame, for finding faces (the bunny ears and comic rays follow them).
@@ -239,14 +255,15 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
     <>
       <div className="workspace fade-in">
         <section className="booth">
-          {/* While posing, the card is zoomed in on its top half so people can see themselves. */}
+          {/* While posing, the whole card is shown as big as fits, so people can see themselves. */}
           <div
+            ref={viewRef}
             className={mode === 'live' ? 'stage-view zoomed' : 'stage-view'}
             style={
               {
                 '--card-w': `${template.width}px`,
                 '--card-h': `${template.height}px`,
-                '--focus-h': `${template.photo.y + template.photo.h + 16}px`,
+                '--zoom': zoom,
               } as CSSProperties
             }
           >

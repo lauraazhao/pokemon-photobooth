@@ -64,21 +64,15 @@ h1 { margin: 0; font-size: 1.75rem; }
 }
 .logo img { display: block; width: min(420px, 85vw); height: auto; }
 .stage { position: relative; flex: none; transform-origin: top center; transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
-/* Frames the card. Zoomed while posing: shows the top of the card bigger, cropped below the photo. */
+/* Holds the card. While posing, the whole card is enlarged (by --zoom, set to fit the screen). */
 .stage-view {
-  --zoom: 1.6;
   display: flex;
   justify-content: center;
   width: var(--card-w);
   height: var(--card-h);
-  overflow: hidden;
-  /* Square bottom corners: the card carries on below, behind the black band. */
-  border-radius: 18px 18px 0 0;
   transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-.stage-view:not(.zoomed) { overflow: visible; }
-@media (max-width: 480px) { .stage-view { --zoom: 1.35; } }
-.stage-view.zoomed { width: min(calc(var(--card-w) * var(--zoom)), calc(100vw - 16px)); height: calc(var(--focus-h) * var(--zoom)); }
+.stage-view.zoomed { width: calc(var(--card-w) * var(--zoom)); height: calc(var(--card-h) * var(--zoom)); }
 .stage-view.zoomed .stage { transform: scale(var(--zoom)); }
 @media (prefers-reduced-motion: reduce) { .stage, .stage-view { transition: none; } }
 /* While posing, everything from the camera button down sits on solid black. */
