@@ -53,40 +53,33 @@
   white-space: pre-line;
 }
 
-/* Holographic shimmer on rare cards: a rainbow sheen with a bright glint that sweeps across the card.
-   Seamless loop: the rainbow repeats every 660px (it starts and ends on the same color) and each cycle
-   moves it exactly one repeat, and the glint resets while it's off the card. */
+/* Holographic shimmer on rare cards: a diagonal rainbow-edged glint that sweeps across the card.
+   It resets while it's off the card, so the loop is seamless. */
 .card-holo {
   position: absolute;
   inset: 0;
   pointer-events: none;
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
-  background:
-    linear-gradient(110deg,
-      transparent 38%,
-      rgba(255, 255, 255, 0.85) 47%,
-      rgba(255, 255, 255, 0.85) 50%,
-      transparent 59%),
-    linear-gradient(110deg,
-      rgba(255, 90, 170, 0.9) 0%,
-      rgba(255, 220, 90, 0.9) 20%,
-      rgba(90, 255, 170, 0.9) 40%,
-      rgba(90, 180, 255, 0.9) 60%,
-      rgba(200, 110, 255, 0.9) 80%,
-      rgba(255, 90, 170, 0.9) 100%);
-  background-size: 250% 100%, 660px 100%;
-  background-repeat: no-repeat, repeat-x;
+  background: linear-gradient(110deg,
+    transparent 30%,
+    rgba(255, 90, 170, 0.8) 37%,
+    rgba(255, 220, 90, 0.85) 42%,
+    rgba(255, 255, 255, 0.9) 47%,
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(90, 255, 200, 0.85) 55%,
+    rgba(120, 160, 255, 0.8) 60%,
+    rgba(200, 110, 255, 0.7) 64%,
+    transparent 71%);
+  background-size: 250% 100%;
+  background-repeat: no-repeat;
   mix-blend-mode: overlay;
-  opacity: 0.55;
-  animation: holo-sweep 8s ease-in-out infinite;
+  opacity: 0.6;
+  animation: holo-sweep 4s ease-in-out infinite;
 }
-.card-holo.is-epic { opacity: 0.7; animation-duration: 6.4s; }
-/* Two sweeps per cycle, each moving the rainbow half a repeat, so the end matches the start. */
+.card-holo.is-epic { opacity: 0.75; animation-duration: 3.2s; }
 @keyframes holo-sweep {
-  0% { background-position: 130% 0, 0 0; }
-  30%, 50% { background-position: -30% 0, 330px 0; }
-  50.01% { background-position: 130% 0, 330px 0; }
-  80%, 100% { background-position: -30% 0, 660px 0; }
+  0% { background-position: 140% 0; }
+  60%, 100% { background-position: -40% 0; }
 }
-@media (prefers-reduced-motion: reduce) { .card-holo { animation-duration: 24s; } }
+@media (prefers-reduced-motion: reduce) { .card-holo { animation-duration: 12s; } }
