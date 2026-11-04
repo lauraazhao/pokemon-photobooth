@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { toPng } from 'html-to-image'
+import { toBlob, toPng } from 'html-to-image'
 import type { ImageSegmenter } from '@mediapipe/tasks-vision'
 import Card from './components/Card'
 import CardTextEditor from './components/CardTextEditor'
@@ -22,6 +22,33 @@ import GalleryAdmin from './components/GalleryAdmin'
 const SCALE = Math.max(2, Math.ceil(window.devicePixelRatio || 1))
 
 type Mode = 'live' | 'captured'
+
+const FILE_NAME = 'photomon-card.png'
+
+/** True on phones and tablets that can share image files (iOS Safari, Android Chrome). */
+function useCanShareFiles() {
+  const [can] = useState(() => {
+    const touch = window.matchMedia('(pointer: coarse)').matches
+    if (!touch || !navigator.canShare) return false
+    try {
+      return navigator.canShare({ files: [new File([''], FILE_NAME, { type: 'image/png' })] })
+    } catch {
+      return false
+    }
+  })
+  return can
+}
+
+/** Opens the share sheet. False if sharing failed (so the caller can download instead); true if shared or cancelled. */
+async function shareFile(file: File): Promise<boolean> {
+  try {
+    await navigator.share({ files: [file] })
+    return true
+  } catch (err) {
+    // Closing the sheet without picking anything isn't an error.
+    return err instanceof DOMException && err.name === 'AbortError'
+  }
+}
 
 function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGallery: () => void }) {
   const { videoRef, status } = useCamera()
@@ -102,19 +129,49 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
     }, 1000)
   }, [segmenter, videoRef])
 
+  const renderCardFile = useCallback(async (): Promise<File | null> => {
+    if (!cardRef.current) return null
+    const blob = await toBlob(cardRef.current, { pixelRatio: SCALE, cacheBust: true })
+    return blob ? new File([blob], FILE_NAME, { type: 'image/png' }) : null
+  }, [])
+
+  // Phones save through the share sheet ("Save Image" puts it in the camera roll),
+  // since websites can't write to the photo library directly.
+  const canShare = useCanShareFiles()
+  // The share sheet has to open right after the tap, so on phones the PNG is
+  // rendered ahead of time (and again whenever the text changes).
+  const [readyFile, setReadyFile] = useState<{ file: File; key: string } | null>(null)
+  const fileKey = mode === 'captured' ? JSON.stringify(cardData) : null
+  useEffect(() => {
+    if (!canShare || !fileKey) return
+    let cancelled = false
+    const timer = setTimeout(async () => {
+      const file = await renderCardFile()
+      if (!cancelled && file) setReadyFile({ file, key: fileKey })
+    }, 400)
+    return () => {
+      cancelled = true
+      clearTimeout(timer)
+    }
+  }, [canShare, fileKey, renderCardFile])
+
   const download = useCallback(async () => {
     if (!cardRef.current) return
     setSaving(true)
     try {
+      if (canShare) {
+        const file = readyFile?.key === fileKey ? readyFile.file : await renderCardFile()
+        if (file && (await shareFile(file))) return
+      }
       const url = await toPng(cardRef.current, { pixelRatio: SCALE, cacheBust: true })
       const a = document.createElement('a')
       a.href = url
-      a.download = 'photobooth-card.png'
+      a.download = FILE_NAME
       a.click()
     } finally {
       setSaving(false)
     }
-  }, [])
+  }, [canShare, readyFile, fileKey, renderCardFile])
 
   const cameraMessage =
     status === 'starting'
@@ -148,7 +205,7 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
               <>
                 <button onClick={() => setMode('live')}>Retake</button>
                 <button className="primary" onClick={download} disabled={saving}>
-                  {saving ? 'Saving…' : 'Download'}
+                  {saving ? 'Saving…' : canShare ? 'Save photo' : 'Download'}
                 </button>
               </>
             )}
