@@ -152,8 +152,6 @@ export default function PackIntro({ onOpened }: Props) {
               </g>
             ))}
             <path className="ribbon-band" d="M 80 98 Q 400 8 720 98 L 720 168 Q 400 78 80 168 Z" />
-            <path className="ribbon-stitch" d="M 88 108 Q 400 18 712 108" />
-            <path className="ribbon-stitch" d="M 88 158 Q 400 68 712 158" />
           </g>
           <path id="pack-title-arc" d="M 70 142 Q 400 50 730 142" fill="none" />
           <text textAnchor="middle">
