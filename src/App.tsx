@@ -11,6 +11,7 @@ import { useCamera } from './lib/useCamera'
 import { cutOutPerson, loadSegmenter } from './lib/segmenter'
 import { renderPerson } from './lib/photoArea'
 import logoUrl from './assets/brand/photomon-logo.png'
+import Meteors from './components/Meteors'
 
 /** Render scale for the photo. Also used for the downloaded PNG. */
 const SCALE = Math.max(2, Math.ceil(window.devicePixelRatio || 1))
@@ -159,25 +160,28 @@ export default function App() {
     loadSegmenter().catch(() => {})
   }, [])
   return (
-    <main>
-      {/* The pack already shows the logo, so the header only appears after it's opened. */}
-      {step === 'pack' ? (
-        <h1 className="visually-hidden">Photomon!</h1>
-      ) : (
-        <h1 className="logo fade-in">
-          <img src={logoUrl} alt="Photomon!" width={420} height={102} />
-        </h1>
-      )}
-      {step === 'pack' && <PackIntro onOpened={() => setStep('pick')} />}
-      {step === 'pick' && (
-        <CardPicker
-          onPick={(c) => {
-            setCard(c)
-            setStep('booth')
-          }}
-        />
-      )}
-      {step === 'booth' && card && <Booth template={card} />}
-    </main>
+    <>
+      <Meteors />
+      <main>
+        {/* The pack already shows the logo, so the header only appears after it's opened. */}
+        {step === 'pack' ? (
+          <h1 className="visually-hidden">Photomon!</h1>
+        ) : (
+          <h1 className="logo fade-in">
+            <img src={logoUrl} alt="Photomon!" width={420} height={102} />
+          </h1>
+        )}
+        {step === 'pack' && <PackIntro onOpened={() => setStep('pick')} />}
+        {step === 'pick' && (
+          <CardPicker
+            onPick={(c) => {
+              setCard(c)
+              setStep('booth')
+            }}
+          />
+        )}
+        {step === 'booth' && card && <Booth template={card} />}
+      </main>
+    </>
   )
 }
