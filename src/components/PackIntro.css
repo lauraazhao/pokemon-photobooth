@@ -228,3 +228,7 @@
   .pack-badge-num { font-size: 2rem; }
   .pack-badge-text { font-size: 0.68rem; max-width: 68px; }
 }
+/* On phones the prompt is nearly as wide as the ribbon, so it sits fully below the tails instead of tucking under the arc. */
+@media (max-width: 600px) {
+  .pack-title { margin-bottom: 0; }
+}
