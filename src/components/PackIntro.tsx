@@ -139,9 +139,23 @@ export default function PackIntro({ onOpened }: Props) {
   return (
     <div className={`pack-intro pack-${phase}`}>
       <p className="pack-prompt">
-        {/* Arched like the Photomon! logo. */}
-        <svg className="pack-title" viewBox="0 18 640 102" role="img" aria-label="Trading Card Photobooth">
-          <path id="pack-title-arc" d="M 10 110 Q 320 20 630 110" fill="none" />
+        {/* Arched like the Photomon! logo, on a curved ribbon banner. */}
+        <svg className="pack-title" viewBox="0 0 800 200" role="img" aria-label="Trading Card Photobooth">
+          <g className="ribbon" aria-hidden="true">
+            {/* Forked tails tucked behind each end, with a darker fold where the band turns under. */}
+            {[false, true].map((flip) => (
+              <g key={String(flip)} transform={flip ? 'matrix(-1 0 0 1 800 0)' : undefined}>
+                <g transform="rotate(-10 84 130)">
+                  <path className="ribbon-tail" d="M 120 122 L 18 122 L 44 154 L 18 186 L 120 186 Z" />
+                  <path className="ribbon-fold" d="M 82 166 L 120 160 L 120 186 Z" />
+                </g>
+              </g>
+            ))}
+            <path className="ribbon-band" d="M 80 98 Q 400 8 720 98 L 720 168 Q 400 78 80 168 Z" />
+            <path className="ribbon-stitch" d="M 88 108 Q 400 18 712 108" />
+            <path className="ribbon-stitch" d="M 88 158 Q 400 68 712 158" />
+          </g>
+          <path id="pack-title-arc" d="M 70 142 Q 400 50 730 142" fill="none" />
           <text textAnchor="middle">
             <textPath href="#pack-title-arc" startOffset="50%">
               Trading Card Photobooth

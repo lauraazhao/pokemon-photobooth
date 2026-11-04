@@ -3,11 +3,11 @@
 .pack-prompt { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
 .pack-title {
   display: block;
-  width: min(640px, calc(100vw - 16px));
+  width: min(680px, calc(100vw - 8px));
   height: auto;
   overflow: visible;
   /* The arc leaves empty space under its middle; pull the prompt up into it. */
-  margin-bottom: calc(min(640px, 100vw - 16px) * -0.035);
+  margin-bottom: calc(min(680px, 100vw - 8px) * -0.045);
 }
 .pack-title text {
   font-family: 'Dokdo', var(--font-site);
@@ -20,6 +20,11 @@
   stroke-linejoin: round;
   paint-order: stroke fill;
 }
+.ribbon path { stroke: #2a4a6b; stroke-width: 3px; stroke-linejoin: round; }
+.ribbon-band { fill: #b4defa; }
+.ribbon-tail { fill: #94cbf0; }
+.ribbon-fold { fill: #6aa7d6; }
+.ribbon .ribbon-stitch { fill: none; stroke: #fff; stroke-width: 2px; stroke-dasharray: 7 6; stroke-linecap: round; opacity: 0.85; }
 .pack-prompt strong { font-size: 1.35rem; font-weight: 400; letter-spacing: 0.02em; }
 .pack-ripped .pack-prompt, .pack-pulling .pack-prompt, .pack-fading .pack-prompt { opacity: 0; transition: opacity 0.3s; }
 
