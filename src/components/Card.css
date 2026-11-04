@@ -53,7 +53,7 @@
   white-space: pre-line;
 }
 
-/* Holographic shimmer on rare cards: a soft rainbow band that drifts across the card. */
+/* Holographic shimmer on rare cards: a rainbow sheen with a bright glint that sweeps across the card. */
 .card-holo {
   position: absolute;
   inset: 0;
@@ -61,22 +61,29 @@
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
   background:
-    linear-gradient(115deg,
-      transparent 20%,
-      rgba(255, 120, 200, 0.55) 32%,
-      rgba(255, 240, 140, 0.6) 40%,
-      rgba(140, 255, 210, 0.6) 48%,
-      rgba(120, 180, 255, 0.55) 56%,
-      rgba(210, 140, 255, 0.5) 64%,
-      transparent 78%);
-  background-size: 300% 300%;
-  mix-blend-mode: color-dodge;
-  opacity: 0.32;
-  animation: holo-drift 6s ease-in-out infinite alternate;
+    linear-gradient(110deg,
+      transparent 38%,
+      rgba(255, 255, 255, 0.85) 47%,
+      rgba(255, 255, 255, 0.85) 50%,
+      transparent 59%),
+    linear-gradient(110deg,
+      rgba(255, 90, 170, 0.9) 0%,
+      rgba(255, 220, 90, 0.9) 14%,
+      rgba(90, 255, 170, 0.9) 28%,
+      rgba(90, 180, 255, 0.9) 42%,
+      rgba(200, 110, 255, 0.9) 56%,
+      rgba(255, 90, 170, 0.9) 70%,
+      rgba(255, 220, 90, 0.9) 84%,
+      rgba(90, 255, 170, 0.9) 100%);
+  background-size: 250% 100%, 200% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+  animation: holo-sweep 4s ease-in-out infinite;
 }
-.card-holo.is-epic { opacity: 0.4; animation-duration: 4.5s; }
-@keyframes holo-drift {
-  from { background-position: 100% 100%; }
-  to { background-position: 0% 0%; }
+.card-holo.is-epic { opacity: 0.7; animation-duration: 3.2s; }
+@keyframes holo-sweep {
+  0% { background-position: 130% 0, 0% 0; }
+  60%, 100% { background-position: -30% 0, 100% 0; }
 }
-@media (prefers-reduced-motion: reduce) { .card-holo { animation: none; background-position: 50% 50%; } }
+@media (prefers-reduced-motion: reduce) { .card-holo { animation-duration: 12s; } }
