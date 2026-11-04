@@ -139,6 +139,7 @@ export default function PackIntro({ onOpened }: Props) {
   return (
     <div className={`pack-intro pack-${phase}`}>
       <p className="pack-prompt">
+        <span className="pack-title">Trading Card Photobooth</span>
         <strong>Rip open the pack to start</strong>
       </p>
       <div

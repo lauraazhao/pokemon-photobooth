@@ -364,13 +364,16 @@ function Photobooth() {
         )}
         {step === 'pack' && (
           <>
-            <PackIntro onOpened={() => setStep('pick')} />
-            <a className="gallery-hint" href="#gallery">
-              See the gallery
-              <span className="gallery-hint-arrow" aria-hidden="true">
-                ↓
-              </span>
-            </a>
+            {/* Fills the first screen except a sliver at the bottom, where the gallery's dark band peeks in. */}
+            <div className="start-hero">
+              <PackIntro onOpened={() => setStep('pick')} />
+              <a className="gallery-hint" href="#gallery">
+                See the gallery
+                <span className="gallery-hint-arrow" aria-hidden="true">
+                  ↓
+                </span>
+              </a>
+            </div>
             <Gallery fresh={showGallery} />
           </>
         )}

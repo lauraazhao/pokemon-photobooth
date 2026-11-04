@@ -6,6 +6,13 @@
   font-display: swap;
 }
 
+/* Dokdo (Google Fonts, SIL Open Font License): the "Trading Card Photobooth" header. Latin subset, self-hosted. */
+@font-face {
+  font-family: 'Dokdo';
+  src: url('/fonts/Dokdo-Latin.woff2') format('woff2');
+  font-display: swap;
+}
+
 :root {
   --font-site: 'Comico', 'Lato', system-ui, sans-serif;
   --font-plain: 'Lato', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -21,6 +28,8 @@
 * { box-sizing: border-box; }
 /* The page scrolls on html, so body can clip decorations (like the black band under the camera) at the bottom of the page. */
 html { overflow-x: hidden; }
+/* Glide to in-page links (like "See the gallery") instead of jumping. */
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 body {
   margin: 0;
   min-height: 100vh;
