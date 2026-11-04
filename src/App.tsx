@@ -10,6 +10,7 @@ import { useCamera } from './lib/useCamera'
 import { cutOutPerson, loadSegmenter } from './lib/segmenter'
 import { renderPerson } from './lib/photoArea'
 import { renderPhoto, type EffectId } from './lib/effects'
+import { detectFaces, loadFaceDetector, type Face } from './lib/faces'
 import EffectBar from './components/EffectBar'
 import logoUrl from './assets/brand/photomon-logo.png'
 import Meteors from './components/Meteors'
@@ -23,7 +24,8 @@ import GalleryAdmin from './components/GalleryAdmin'
 /** Render scale for the photo. Also used for the downloaded PNG. */
 const SCALE = Math.max(2, Math.ceil(window.devicePixelRatio || 1))
 
-type Mode = 'live' | 'captured'
+/** Posing, then editing the photo, then sharing and saving the finished card. */
+type Mode = 'live' | 'captured' | 'final'
 
 const FILE_NAME = 'photomon-card.png'
 
@@ -68,6 +70,22 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
   const [effect, setEffect] = useState<EffectId>('none')
   // Bumped on every capture so the effect previews redraw with the new photo.
   const [shot, setShot] = useState(0)
+  // The captured camera frame, for finding faces (the bunny ears and comic rays follow them).
+  const [frame] = useState(() => document.createElement('canvas'))
+  const [faces, setFaces] = useState<Face[]>([])
+  useEffect(() => {
+    loadFaceDetector().catch(() => {})
+  }, [])
+  useEffect(() => {
+    if (!shot || !frame.width) return
+    let cancelled = false
+    detectFaces(frame).then((f) => {
+      if (!cancelled) setFaces(f)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [shot, frame])
   // The card art, so color effects can tint the photo's background too.
   const [art, setArt] = useState<HTMLImageElement | null>(null)
   useEffect(() => {
@@ -80,11 +98,12 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
       width: template.photo.w,
       height: template.photo.h,
       person: cutout,
+      faces,
       art,
       cardWidth: template.width,
       photoBox: template.photo,
     }),
-    [template, art, cutout],
+    [template, art, cutout, faces],
   )
 
   useEffect(() => {
@@ -101,7 +120,7 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
     const draw = (person: HTMLCanvasElement | HTMLVideoElement | null) =>
       renderPerson(canvas, { width: template.photo.w, height: template.photo.h, person, mirror: true, scale: SCALE })
 
-    if (mode === 'captured') {
+    if (mode !== 'live') {
       renderPhoto(canvas, { ...photoBase, effect, scale: SCALE })
       return
     }
@@ -141,8 +160,14 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
       clearInterval(id)
       setCountdown(null)
       playShutter()
-      // Without the model, freeze the raw frame instead of a cutout.
       const video = videoRef.current
+      if (video) {
+        frame.width = video.videoWidth
+        frame.height = video.videoHeight
+        frame.getContext('2d')!.drawImage(video, 0, 0)
+      }
+      setFaces([])
+      // Without the model, freeze the raw frame instead of a cutout.
       if (!segmenter && video) {
         const c = cutout
         c.width = video.videoWidth
@@ -152,7 +177,7 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
       setShot((s) => s + 1)
       setMode('captured')
     }, 1000)
-  }, [segmenter, videoRef, cutout])
+  }, [segmenter, videoRef, cutout, frame])
 
   const renderCardFile = useCallback(async (): Promise<File | null> => {
     if (!cardRef.current) return null
@@ -166,7 +191,7 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
   // The share sheet has to open right after the tap, so on phones the PNG is
   // rendered ahead of time (and again whenever the text changes).
   const [readyFile, setReadyFile] = useState<{ file: File; key: string } | null>(null)
-  const fileKey = mode === 'captured' ? JSON.stringify([cardData, effect, shot]) : null
+  const fileKey = mode === 'final' ? JSON.stringify([cardData, effect, shot, faces]) : null
   useEffect(() => {
     if (!canShare || !fileKey) return
     let cancelled = false
@@ -226,7 +251,7 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
               {segmenterError ? 'Background removal is unavailable in this browser.' : 'Loading background removal…'}
             </p>
           )}
-          {mode === 'captured' && <EffectBar base={photoBase} width={template.width} value={effect} onChange={setEffect} version={shot} />}
+          {mode === 'captured' && <EffectBar base={photoBase} value={effect} onChange={setEffect} version={shot} />}
           <div className="actions">
             {mode === 'live' ? (
               <button className="capture-button" onClick={takePhoto} disabled={status !== 'live' || countdown !== null}>
@@ -237,9 +262,16 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
                 </span>
                 Start countdown
               </button>
-            ) : (
+            ) : mode === 'captured' ? (
               <>
                 <button onClick={() => setMode('live')}>Retake</button>
+                <button className="primary" onClick={() => setMode('final')}>
+                  Next
+                </button>
+              </>
+            ) : (
+              <>
+                <button onClick={() => setMode('captured')}>Back</button>
                 <button className="primary" onClick={download} disabled={saving}>
                   {saving ? 'Saving…' : canShare ? 'Save photo' : 'Download'}
                 </button>
@@ -250,6 +282,10 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
         {mode === 'captured' && (
           <div className="side-panels">
             <CardTextEditor data={cardData} onChange={setCardData} />
+          </div>
+        )}
+        {mode === 'final' && (
+          <div className="side-panels">
             <GallerySubmit cardRef={cardRef} onViewGallery={onViewGallery} />
           </div>
         )}

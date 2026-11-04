@@ -22,6 +22,7 @@
 body {
   margin: 0;
   min-height: 100vh;
+  overflow-x: clip;
 }
 /* Dithered starfield, darkened a touch at the top and bottom so text stays readable.
    On a fixed layer of its own so it can stay pixel-crisp without affecting the cards. */
@@ -196,12 +197,11 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .effect-bar {
   display: flex;
   gap: 10px;
-  max-width: min(100%, calc(100vw - 32px));
+  justify-content: center;
+  max-width: calc(100vw - 32px);
   overflow-x: auto;
   padding: 4px 4px 8px;
-  scroll-snap-type: x proximity;
   scrollbar-width: thin;
-  -webkit-overflow-scrolling: touch;
 }
 .effect-option {
   flex: none;
@@ -215,7 +215,6 @@ button:disabled { opacity: .5; cursor: not-allowed; }
   color: var(--text);
   font-size: 0.8rem;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
-  scroll-snap-align: start;
 }
 .effect-thumb {
   display: block;
@@ -225,6 +224,7 @@ button:disabled { opacity: .5; cursor: not-allowed; }
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25), 0 4px 10px rgba(0, 0, 0, 0.35);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
+@media (max-width: 480px) { .effect-bar { gap: 8px; } .effect-thumb { height: 48px; } }
 .effect-option:hover .effect-thumb { transform: translateY(-2px); }
 .effect-option.selected .effect-thumb { box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--accent); }
 .effect-option:focus-visible { outline: none; }

@@ -29,17 +29,15 @@ function Thumb({ base, effect, version }: { base: Base; effect: EffectId; versio
 
 interface Props {
   base: Base
-  /** Width of the card, so the row scrolls instead of getting wider than it. */
-  width: number
   value: EffectId
   onChange: (e: EffectId) => void
   /** Changes whenever a new photo is taken, so the previews redraw. */
   version: number
 }
 
-export default function EffectBar({ base, width, value, onChange, version }: Props) {
+export default function EffectBar({ base, value, onChange, version }: Props) {
   return (
-    <div className="effect-bar" style={{ width }} role="radiogroup" aria-label="Photo effects">
+    <div className="effect-bar" role="radiogroup" aria-label="Photo effects">
       {EFFECTS.map((e) => (
         <button
           key={e.id}
