@@ -180,3 +180,51 @@
 @media (prefers-reduced-motion: reduce) {
   .pack-intro *, .pack-intro { animation: none !important; transition: none !important; }
 }
+
+/* Comic-style badge beside the pack: a halftone circle with a hard shadow, tilted, gently bobbing. */
+.pack-stage { position: relative; }
+.pack-badge {
+  position: absolute;
+  z-index: 2;
+  top: 18%;
+  left: calc(100% - 34px);
+  width: 118px;
+  height: 118px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(227, 53, 13, 0.22) 1.6px, transparent 2px) 0 0 / 9px 9px,
+    var(--gold);
+  box-shadow: 5px 5px 0 var(--ink);
+  color: var(--ink);
+  text-align: center;
+  text-shadow: none;
+  line-height: 1;
+  pointer-events: none;
+  transform: rotate(12deg);
+  animation: badge-bob 2.4s ease-in-out infinite;
+  transition: opacity 0.3s;
+}
+.pack-badge-num {
+  font-size: 2.6rem;
+  color: #fff;
+  -webkit-text-stroke: 2px var(--ink);
+  paint-order: stroke fill;
+  text-shadow: 3px 3px 0 var(--ink);
+}
+.pack-badge-text { margin-top: 2px; font-size: 0.82rem; max-width: 84px; line-height: 1.05; }
+@keyframes badge-bob {
+  0%, 100% { transform: rotate(12deg) scale(1); }
+  50% { transform: rotate(8deg) scale(1.05); }
+}
+.pack-dragging .pack-badge, .pack-ripped .pack-badge, .pack-pulling .pack-badge, .pack-fading .pack-badge { opacity: 0; }
+@media (max-width: 520px) {
+  .pack-badge { width: 92px; height: 92px; top: 10%; left: auto; right: -4px; }
+  .pack-badge-num { font-size: 2rem; }
+  .pack-badge-text { font-size: 0.68rem; max-width: 68px; }
+}

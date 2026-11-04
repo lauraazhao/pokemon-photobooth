@@ -1,6 +1,7 @@
 import { useRef, useState, type CSSProperties, type PointerEvent } from 'react'
 import { playRip, playWhoosh, startTear, unlockAudio } from '../lib/sfx'
 import packUrl from '../assets/pack/card-pack.png'
+import { CARDS } from '../lib/cards'
 import './Card.css'
 import './PackIntro.css'
 
@@ -162,6 +163,12 @@ export default function PackIntro({ onOpened }: Props) {
         </svg>
         <strong>Rip open the pack to start</strong>
       </p>
+      <div className="pack-stage">
+      {/* Comic-style badge beside the pack: how many card frames there are to collect. */}
+      <p className="pack-badge">
+        <span className="pack-badge-num">{CARDS.length}</span>
+        <span className="pack-badge-text">frames to collect!</span>
+      </p>
       <div
         className="pack"
         style={{ aspectRatio: `${PACK_W} / ${PACK_H}`, '--seam': `${SEAM_PCT}%` } as CSSProperties}
@@ -206,6 +213,7 @@ export default function PackIntro({ onOpened }: Props) {
             </g>
           </svg>
         </div>
+      </div>
       </div>
     </div>
   )
