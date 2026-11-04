@@ -1,12 +1,15 @@
+import type { ReactNode } from 'react'
 import { EDITABLE_FIELDS, type CardData } from '../lib/cardData'
 
 interface Props {
   data: CardData
   onChange: (data: CardData) => void
+  /** Extra controls shown under the text fields (the photo filters). */
+  children?: ReactNode
 }
 
 /** Side panel for editing the card text, shown after the photo is taken. Edits update the card live. */
-export default function CardTextEditor({ data, onChange }: Props) {
+export default function CardTextEditor({ data, onChange, children }: Props) {
   return (
     <aside className="panel" aria-label="Edit card text">
       <h2>Edit card</h2>
@@ -36,6 +39,7 @@ export default function CardTextEditor({ data, onChange }: Props) {
       })}
         </fieldset>
       </form>
+      {children}
     </aside>
   )
 }

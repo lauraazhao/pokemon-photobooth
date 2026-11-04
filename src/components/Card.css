@@ -52,3 +52,34 @@
   overflow-wrap: anywhere;
   white-space: pre-line;
 }
+
+/* Holographic shimmer on rare cards: a diagonal rainbow-edged glint that sweeps across the card.
+   It resets while it's off the card, so the loop is seamless. */
+.card-holo {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  background: linear-gradient(110deg,
+    transparent 30%,
+    rgba(255, 90, 170, 0.8) 37%,
+    rgba(255, 220, 90, 0.85) 42%,
+    rgba(255, 255, 255, 0.9) 47%,
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(90, 255, 200, 0.85) 55%,
+    rgba(120, 160, 255, 0.8) 60%,
+    rgba(200, 110, 255, 0.7) 64%,
+    transparent 71%);
+  background-size: 250% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+  animation: holo-sweep 4s ease-in-out infinite;
+}
+.card-holo.is-epic { opacity: 0.75; animation-duration: 3.2s; }
+@keyframes holo-sweep {
+  0% { background-position: 140% 0; }
+  60%, 100% { background-position: -40% 0; }
+}
+@media (prefers-reduced-motion: reduce) { .card-holo { animation-duration: 12s; } }

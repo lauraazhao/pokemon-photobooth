@@ -13,6 +13,18 @@ interface CardProps {
 
 const place = (b: Box): CSSProperties => ({ left: b.x, top: b.y, width: b.w, height: b.h })
 
+/** The shimmer covers the card's shape (masked by the art) with a hole over the photo. */
+function holoStyle(t: CardTemplate): CSSProperties {
+  const { x, y, w, h } = t.photo
+  const W = t.width
+  const H = t.height
+  return {
+    WebkitMaskImage: `url(${t.art})`,
+    maskImage: `url(${t.art})`,
+    clipPath: `polygon(evenodd, 0 0, ${W}px 0, ${W}px ${H}px, 0 ${H}px, 0 0, ${x}px ${y}px, ${x}px ${y + h}px, ${x + w}px ${y + h}px, ${x + w}px ${y}px, ${x}px ${y}px)`,
+  }
+}
+
 /** A card design from Figma: the card art, the person on the photo area, and the editable text on top. */
 const Card = forwardRef<HTMLDivElement, CardProps>(function Card({ template: t, data, photoRef }, ref) {
   const text = data ?? t.defaults
@@ -25,6 +37,8 @@ const Card = forwardRef<HTMLDivElement, CardProps>(function Card({ template: t, 
       <img className="card-art" src={t.art} alt="" draggable={false} />
       {photoRef && <canvas className="card-photo" ref={photoRef} style={place(t.photo)} />}
       {t.front && <img className="card-art" src={t.front} alt="" draggable={false} />}
+      {/* Rare and epic cards shimmer like a holo card. Shown on screen only (saving skips it); the photo stays clear. */}
+      {t.rarity !== 'basic' && <div className={`card-holo is-${t.rarity}`} style={holoStyle(t)} aria-hidden="true" />}
       <p className="card-text font-title card-name" ref={nameRef} style={place(t.title)}>
         {text.name}
       </p>

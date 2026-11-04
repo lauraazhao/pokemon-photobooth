@@ -171,19 +171,15 @@
 }
 
 /* Phones: swipe through the cards sideways. */
+/* On phones the cards stack in a column, so there's nothing to scroll sideways. */
 @media (max-width: 760px) {
-  .picker { --s: 0.62; }
+  .picker { --s: 0.8; }
   .picker-cards {
-    justify-content: flex-start;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    width: 100%;
-    gap: 16px;
-    padding-block: 40px; /* room for the void inside the scroll area */
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    padding: 8px 0 24px;
   }
-  .picker-cards li { scroll-snap-align: center; }
-  .picker-cards li:first-child { margin-left: auto; }
-  .picker-cards li:last-child { margin-right: auto; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,8 +1,32 @@
 .pack-intro { display: flex; flex-direction: column; align-items: center; gap: 28px; }
 
 .pack-prompt { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
+.pack-title {
+  display: block;
+  width: min(680px, calc(100vw - 8px));
+  height: auto;
+  overflow: visible;
+  /* No inherited text shadow on the banner. */
+  text-shadow: none;
+  /* The arc leaves empty space under its middle; pull the prompt up into it. */
+  margin-bottom: calc(min(680px, 100vw - 8px) * -0.045);
+}
+.pack-title text {
+  font-family: 'Dokdo', var(--font-site);
+  font-size: 54px;
+  letter-spacing: 1px;
+  fill: #edcb5c;
+  /* A thin black outline (drawn under the fill, so about 1px shows). */
+  stroke: #000;
+  stroke-width: 2.5px;
+  stroke-linejoin: round;
+  paint-order: stroke fill;
+}
+.ribbon path { stroke: #2a4a6b; stroke-width: 3px; stroke-linejoin: round; }
+.ribbon-band { fill: #b4defa; }
+.ribbon-tail { fill: #94cbf0; }
+.ribbon-fold { fill: #6aa7d6; }
 .pack-prompt strong { font-size: 1.35rem; font-weight: 400; letter-spacing: 0.02em; }
-.pack-prompt span { color: var(--text-muted); }
 .pack-ripped .pack-prompt, .pack-pulling .pack-prompt, .pack-fading .pack-prompt { opacity: 0; transition: opacity 0.3s; }
 
 .pack {
@@ -68,6 +92,27 @@
   75% { left: 100%; opacity: 1; transform: translateY(0) rotate(8deg); }
   100% { left: 100%; opacity: 0; transform: translateY(6px) rotate(8deg); }
 }
+/* The holo sweep from Card.css, softer and mirrored (the band leans the other way and sweeps right to left). */
+.pack-holo {
+  transition: opacity 0.2s;
+  opacity: 0.35;
+  background-image: linear-gradient(250deg,
+    transparent 30%,
+    rgba(255, 90, 170, 0.8) 37%,
+    rgba(255, 220, 90, 0.85) 42%,
+    rgba(255, 255, 255, 0.9) 47%,
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(90, 255, 200, 0.85) 55%,
+    rgba(120, 160, 255, 0.8) 60%,
+    rgba(200, 110, 255, 0.7) 64%,
+    transparent 71%);
+  animation-name: pack-holo-sweep;
+}
+@keyframes pack-holo-sweep {
+  0% { background-position: -40% 0; }
+  60%, 100% { background-position: 140% 0; }
+}
+.pack-dragging .pack-holo, .pack-ripped .pack-holo, .pack-pulling .pack-holo, .pack-fading .pack-holo { opacity: 0; }
 .pack-dragging .pack-hint, .pack-ripped .pack-hint, .pack-pulling .pack-hint, .pack-fading .pack-hint { opacity: 0; }
 
 /* Pulling: three cards shoot up out of the opening, blurred into streaks of light.
@@ -134,4 +179,52 @@
 
 @media (prefers-reduced-motion: reduce) {
   .pack-intro *, .pack-intro { animation: none !important; transition: none !important; }
+}
+
+/* Comic-style badge beside the pack: a halftone circle with a hard shadow, tilted, gently bobbing. */
+.pack-stage { position: relative; }
+.pack-badge {
+  position: absolute;
+  z-index: 2;
+  top: 18%;
+  left: calc(100% - 34px);
+  width: 118px;
+  height: 118px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--ink);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(227, 53, 13, 0.22) 1.6px, transparent 2px) 0 0 / 9px 9px,
+    var(--gold);
+  box-shadow: 5px 5px 0 var(--ink);
+  color: var(--ink);
+  text-align: center;
+  text-shadow: none;
+  line-height: 1;
+  pointer-events: none;
+  transform: rotate(12deg);
+  animation: badge-bob 2.4s ease-in-out infinite;
+  transition: opacity 0.3s;
+}
+.pack-badge-num {
+  font-size: 2.6rem;
+  color: #fff;
+  -webkit-text-stroke: 2px var(--ink);
+  paint-order: stroke fill;
+  text-shadow: 3px 3px 0 var(--ink);
+}
+.pack-badge-text { margin-top: 2px; font-size: 0.82rem; max-width: 84px; line-height: 1.05; }
+@keyframes badge-bob {
+  0%, 100% { transform: rotate(12deg) scale(1); }
+  50% { transform: rotate(8deg) scale(1.05); }
+}
+.pack-dragging .pack-badge, .pack-ripped .pack-badge, .pack-pulling .pack-badge, .pack-fading .pack-badge { opacity: 0; }
+@media (max-width: 520px) {
+  .pack-badge { width: 92px; height: 92px; top: 10%; left: auto; right: -4px; }
+  .pack-badge-num { font-size: 2rem; }
+  .pack-badge-text { font-size: 0.68rem; max-width: 68px; }
 }

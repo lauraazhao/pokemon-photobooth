@@ -199,7 +199,7 @@ export function playLand(at = 0) {
 }
 
 /**
- * Hovering a card: a soft, angelic choir-like chord that swells in gently,
+ * Hovering a card: a soft, angelic choir-like chord that comes in right away,
  * with a faint airy shimmer on top. The epic card's chord is brighter, with a
  * few slow sparkles. Returns a function that fades it out.
  */
@@ -209,7 +209,8 @@ export function startVoid(epic = false): () => void {
   const t = c.currentTime
   const out = c.createGain()
   out.gain.setValueAtTime(0.0001, t)
-  out.gain.exponentialRampToValueAtTime(1, t + 0.6)
+  // Starts right away: just long enough a fade to avoid a click.
+  out.gain.exponentialRampToValueAtTime(1, t + 0.04)
   // Rounds off the top so it sounds like voices rather than beeps.
   const soften = c.createBiquadFilter()
   soften.type = 'lowpass'

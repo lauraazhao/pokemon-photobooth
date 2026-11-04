@@ -1,6 +1,8 @@
 import { useRef, useState, type CSSProperties, type PointerEvent } from 'react'
 import { playRip, playWhoosh, startTear, unlockAudio } from '../lib/sfx'
 import packUrl from '../assets/pack/card-pack.png'
+import { CARDS } from '../lib/cards'
+import './Card.css'
 import './PackIntro.css'
 
 /** Pack size in Figma ("card pack", node 843:16734). */
@@ -138,8 +140,34 @@ export default function PackIntro({ onOpened }: Props) {
   return (
     <div className={`pack-intro pack-${phase}`}>
       <p className="pack-prompt">
+        {/* Arched like the Photomon! logo, on a curved ribbon banner. */}
+        <svg className="pack-title" viewBox="0 0 800 200" role="img" aria-label="Trading Card Photobooth">
+          <g className="ribbon" aria-hidden="true">
+            {/* Forked tails tucked behind each end, with a darker fold where the band turns under. */}
+            {[false, true].map((flip) => (
+              <g key={String(flip)} transform={flip ? 'matrix(-1 0 0 1 800 0)' : undefined}>
+                <g transform="rotate(-10 84 130)">
+                  <path className="ribbon-tail" d="M 120 122 L 18 122 L 44 154 L 18 186 L 120 186 Z" />
+                  <path className="ribbon-fold" d="M 82 166 L 120 160 L 120 186 Z" />
+                </g>
+              </g>
+            ))}
+            <path className="ribbon-band" d="M 80 98 Q 400 8 720 98 L 720 168 Q 400 78 80 168 Z" />
+          </g>
+          <path id="pack-title-arc" d="M 70 142 Q 400 50 730 142" fill="none" />
+          <text textAnchor="middle">
+            <textPath href="#pack-title-arc" startOffset="50%">
+              Trading Card Photobooth
+            </textPath>
+          </text>
+        </svg>
         <strong>Rip open the pack to start</strong>
-        <span>Swipe across the top of the pack</span>
+      </p>
+      <div className="pack-stage">
+      {/* Comic-style badge beside the pack: how many card frames there are to collect. */}
+      <p className="pack-badge">
+        <span className="pack-badge-num">{CARDS.length}</span>
+        <span className="pack-badge-text">frames to collect!</span>
       </p>
       <div
         className="pack"
@@ -167,6 +195,12 @@ export default function PackIntro({ onOpened }: Props) {
         </div>
         <div className="pack-layer pack-body" style={{ backgroundImage: `url(${packUrl})`, clipPath: BODY_CLIP }} />
         <div className="pack-layer pack-top" style={topStyle} />
+        {/* The same holo sweep as the rare cards (styles in Card.css), shaped to the pack; gone once you start ripping. */}
+        <div
+          className="card-holo pack-holo"
+          style={{ WebkitMaskImage: `url(${packUrl})`, maskImage: `url(${packUrl})` }}
+          aria-hidden="true"
+        />
         <div className="pack-hint" aria-hidden="true">
           <div className="pack-hint-line" />
           <svg className="pack-hint-finger" viewBox="0 0 26 32" width="36" height="44">
@@ -179,6 +213,7 @@ export default function PackIntro({ onOpened }: Props) {
             </g>
           </svg>
         </div>
+      </div>
       </div>
     </div>
   )

@@ -8,3 +8,6 @@ The card design uses two fonts that are not bundled here:
 - **Gill Sans MT** (numbers and body text). A commercial Monotype font, so it can't be
   shipped with the site. Macs have "Gill Sans" built in and use it automatically;
   everyone else sees Lato.
+
+- **Dokdo** (the "Trading Card Photobooth" header on the start screen). From Google Fonts under the
+  SIL Open Font License; `public/fonts/Dokdo-Latin.woff2` is the Latin subset.
