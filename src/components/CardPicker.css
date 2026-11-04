@@ -6,8 +6,7 @@
   gap: 8px;
   width: 100%;
 }
-.picker-title { margin: 0; font-size: 1.4rem; }
-.picker-hint { margin: 0 0 12px; color: #666; }
+.picker-title { margin: 0 0 12px; font-size: 1.4rem; }
 
 .picker-cards {
   list-style: none;
@@ -60,9 +59,7 @@
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 .has-pick .picker-card:not(.is-picked) { opacity: 0; filter: blur(2px); transform: scale(0.94); }
-.has-pick .picker-card-name { opacity: 0; transition: opacity 0.3s; }
 
-.picker-card-name { font-size: 0.9rem; color: #555; }
 
 /* Phones: swipe through the cards sideways. */
 @media (max-width: 760px) {
@@ -85,15 +82,3 @@
   .picker-card:hover:not(:disabled), .picker-card:focus-visible { transform: none; }
 }
 
-.picker-rarity {
-  margin-left: 6px;
-  padding: 1px 7px;
-  border-radius: 999px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #fff;
-  background: #6b5fd3;
-}
-.picker-rarity.is-epic { background: linear-gradient(90deg, #d79a1c, #f4cf4a); color: #3a2600; }

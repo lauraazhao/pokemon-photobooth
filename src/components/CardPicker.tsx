@@ -24,9 +24,8 @@ export default function CardPicker({ onPick }: Props) {
   return (
     <section className={`picker${picked ? ' has-pick' : ''}`} aria-labelledby="picker-title">
       <h2 id="picker-title" className="picker-title">
-        Choose your card
+        Choose a card
       </h2>
-      <p className="picker-hint">You pulled {choices.length} cards. Pick one for your photo.</p>
       <ul className="picker-cards">
         {choices.map((card, i) => (
           <li key={card.id} style={{ animationDelay: `${i * 140}ms` }}>
@@ -41,10 +40,6 @@ export default function CardPicker({ onPick }: Props) {
                 <Card template={card} />
               </span>
             </button>
-            <span className="picker-card-name">
-              {card.name}
-              {card.rarity !== 'basic' && <span className={`picker-rarity is-${card.rarity}`}>{card.rarity}</span>}
-            </span>
           </li>
         ))}
       </ul>
