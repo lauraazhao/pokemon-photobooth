@@ -1,4 +1,4 @@
-import { toCanvas } from 'html-to-image'
+import { canvasToBlob as toBlob, renderCard } from './renderCard'
 
 export interface GalleryEntry {
   id: string
@@ -17,12 +17,9 @@ export async function fetchGallery(fresh = false): Promise<GalleryEntry[]> {
   return ((await res.json()) as { entries: GalleryEntry[] }).entries
 }
 
-const toBlob = (canvas: HTMLCanvasElement, type: string, quality: number) =>
-  new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type, quality))
-
 /** Renders the finished card to a compact image for upload (WebP, or JPEG where WebP isn't supported). */
 export async function cardImage(card: HTMLElement): Promise<Blob> {
-  const canvas = await toCanvas(card, { pixelRatio: 2, cacheBust: true })
+  const canvas = await renderCard(card, 2)
   const webp = await toBlob(canvas, 'image/webp', 0.9)
   if (webp && webp.type === 'image/webp') return webp
   // JPEG has no transparency, so fill the rounded corners with the page color.

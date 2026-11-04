@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { toBlob, toPng } from 'html-to-image'
 import type { ImageSegmenter } from '@mediapipe/tasks-vision'
 import Card from './components/Card'
 import CardTextEditor from './components/CardTextEditor'
@@ -12,6 +11,7 @@ import { cutOutPerson, loadSegmenter } from './lib/segmenter'
 import { renderPerson } from './lib/photoArea'
 import logoUrl from './assets/brand/photomon-logo.png'
 import Meteors from './components/Meteors'
+import { canvasToBlob, renderCard } from './lib/renderCard'
 import SoundToggle from './components/SoundToggle'
 import { playShutter, playTick } from './lib/sfx'
 import Gallery from './components/Gallery'
@@ -131,7 +131,7 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
 
   const renderCardFile = useCallback(async (): Promise<File | null> => {
     if (!cardRef.current) return null
-    const blob = await toBlob(cardRef.current, { pixelRatio: SCALE, cacheBust: true })
+    const blob = await canvasToBlob(await renderCard(cardRef.current, SCALE))
     return blob ? new File([blob], FILE_NAME, { type: 'image/png' }) : null
   }, [])
 
@@ -163,11 +163,14 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
         const file = readyFile?.key === fileKey ? readyFile.file : await renderCardFile()
         if (file && (await shareFile(file))) return
       }
-      const url = await toPng(cardRef.current, { pixelRatio: SCALE, cacheBust: true })
+      const blob = await canvasToBlob(await renderCard(cardRef.current, SCALE))
+      if (!blob) return
+      const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
       a.download = FILE_NAME
       a.click()
+      setTimeout(() => URL.revokeObjectURL(url), 10_000)
     } finally {
       setSaving(false)
     }
