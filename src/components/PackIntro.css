@@ -67,7 +67,26 @@
   75% { left: 100%; opacity: 1; transform: translateY(0) rotate(8deg); }
   100% { left: 100%; opacity: 0; transform: translateY(6px) rotate(8deg); }
 }
-.pack-holo { transition: opacity 0.2s; }
+/* The holo sweep from Card.css, softer and mirrored (the band leans the other way and sweeps right to left). */
+.pack-holo {
+  transition: opacity 0.2s;
+  opacity: 0.35;
+  background-image: linear-gradient(250deg,
+    transparent 30%,
+    rgba(255, 90, 170, 0.8) 37%,
+    rgba(255, 220, 90, 0.85) 42%,
+    rgba(255, 255, 255, 0.9) 47%,
+    rgba(255, 255, 255, 0.9) 50%,
+    rgba(90, 255, 200, 0.85) 55%,
+    rgba(120, 160, 255, 0.8) 60%,
+    rgba(200, 110, 255, 0.7) 64%,
+    transparent 71%);
+  animation-name: pack-holo-sweep;
+}
+@keyframes pack-holo-sweep {
+  0% { background-position: -40% 0; }
+  60%, 100% { background-position: 140% 0; }
+}
 .pack-dragging .pack-holo, .pack-ripped .pack-holo, .pack-pulling .pack-holo, .pack-fading .pack-holo { opacity: 0; }
 .pack-dragging .pack-hint, .pack-ripped .pack-hint, .pack-pulling .pack-hint, .pack-fading .pack-hint { opacity: 0; }
 
