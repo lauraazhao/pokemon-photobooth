@@ -52,3 +52,31 @@
   overflow-wrap: anywhere;
   white-space: pre-line;
 }
+
+/* Holographic shimmer on rare cards: a soft rainbow band that drifts across the card. */
+.card-holo {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  background:
+    linear-gradient(115deg,
+      transparent 20%,
+      rgba(255, 120, 200, 0.55) 32%,
+      rgba(255, 240, 140, 0.6) 40%,
+      rgba(140, 255, 210, 0.6) 48%,
+      rgba(120, 180, 255, 0.55) 56%,
+      rgba(210, 140, 255, 0.5) 64%,
+      transparent 78%);
+  background-size: 300% 300%;
+  mix-blend-mode: color-dodge;
+  opacity: 0.32;
+  animation: holo-drift 6s ease-in-out infinite alternate;
+}
+.card-holo.is-epic { opacity: 0.4; animation-duration: 4.5s; }
+@keyframes holo-drift {
+  from { background-position: 100% 100%; }
+  to { background-position: 0% 0%; }
+}
+@media (prefers-reduced-motion: reduce) { .card-holo { animation: none; background-position: 50% 50%; } }
