@@ -16,6 +16,8 @@ main {
   gap: 16px;
 }
 h1 { margin: 0; font-size: 1.75rem; }
+.logo { line-height: 0; }
+.logo img { display: block; width: min(280px, 70vw); height: auto; }
 .stage { position: relative; }
 .countdown {
   position: absolute; inset: 0; display: grid; place-items: center;

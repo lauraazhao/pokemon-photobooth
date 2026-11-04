@@ -10,6 +10,7 @@ import type { CardTemplate } from './lib/cards'
 import { useCamera } from './lib/useCamera'
 import { cutOutPerson, loadSegmenter } from './lib/segmenter'
 import { renderPerson } from './lib/photoArea'
+import logoUrl from './assets/brand/photomon-logo.png'
 
 /** Render scale for the photo. Also used for the downloaded PNG. */
 const SCALE = Math.max(2, Math.ceil(window.devicePixelRatio || 1))
@@ -159,7 +160,9 @@ export default function App() {
   }, [])
   return (
     <main>
-      <h1>Card Photobooth</h1>
+      <h1 className="logo">
+        <img src={logoUrl} alt="Photomon!" width={280} height={68} />
+      </h1>
       {step === 'pack' && <PackIntro onOpened={() => setStep('pick')} />}
       {step === 'pick' && (
         <CardPicker
