@@ -4,10 +4,18 @@
   src: local('Comico'), local('Comico Regular'), url('/fonts/Comico-Regular.woff2') format('woff2');
   font-display: swap;
 }
+/* Pin the card body text to the regular Gill Sans face (by its PostScript names),
+   so browsers can't pick a heavier face of the family. Falls back to Lato. */
+@font-face {
+  font-family: 'Card Body';
+  src: local('GillSansMT'), local('Gill Sans MT'), local('GillSans'), local('Gill Sans');
+  font-weight: 400;
+  font-style: normal;
+}
 
 .card {
   --font-title: 'Comico', 'Lato', sans-serif;
-  --font-body: 'Gill Sans MT', 'Gill Sans', 'Lato', sans-serif;
+  --font-body: 'Card Body', 'Lato', sans-serif;
   position: relative;
   flex: none;
   font-family: var(--font-body);
@@ -40,6 +48,10 @@
 .card-attack-name { text-align: center; }
 .card-attack-text {
   font-size: 11px;
+  font-weight: 400;
+  /* Mac's default subpixel smoothing makes small text look bold. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   line-height: normal;
   overflow-wrap: anywhere;
   white-space: pre-line;
