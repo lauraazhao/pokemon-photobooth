@@ -201,8 +201,14 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
           )}
           <div className="actions">
             {mode === 'live' ? (
-              <button className="primary" onClick={takePhoto} disabled={status !== 'live' || countdown !== null}>
-                Take photo
+              <button className="capture-button" onClick={takePhoto} disabled={status !== 'live' || countdown !== null}>
+                <span className="capture-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+                    <path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.6l1.6-2.2A1.5 1.5 0 0 1 9.9 4.2h4.2a1.5 1.5 0 0 1 1.2.6L16.9 7h2.6A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z" />
+                    <circle cx="12" cy="12.8" r="3.6" />
+                  </svg>
+                </span>
+                Start countdown
               </button>
             ) : (
               <>

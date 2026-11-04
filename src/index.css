@@ -151,3 +151,32 @@ button:disabled { opacity: .5; cursor: not-allowed; }
   backdrop-filter: blur(4px);
 }
 .sound-toggle:hover, .sound-toggle:focus-visible { background: rgba(30, 36, 80, 0.8); }
+
+/* Big round camera button that starts the photo countdown, labeled underneath. */
+.capture-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font-size: 0.95rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+}
+.capture-icon {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.9), 0 8px 20px rgba(0, 0, 0, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.capture-button:hover:not(:disabled) .capture-icon { transform: scale(1.06); }
+.capture-button:active:not(:disabled) .capture-icon { transform: scale(0.94); }
+.capture-button:focus-visible { outline: none; }
+.capture-button:focus-visible .capture-icon { box-shadow: 0 0 0 4px #fff, 0 0 0 7px #3b6fd8; }
