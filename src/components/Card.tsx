@@ -24,6 +24,7 @@ const Card = forwardRef<HTMLDivElement, CardProps>(function Card({ template: t, 
     <div className="card" ref={ref} style={{ width: t.width, height: t.height, color: t.color }}>
       <img className="card-art" src={t.art} alt="" draggable={false} />
       {photoRef && <canvas className="card-photo" ref={photoRef} style={place(t.photo)} />}
+      {t.front && <img className="card-art" src={t.front} alt="" draggable={false} />}
       <p className="card-text font-title card-name" ref={nameRef} style={place(t.title)}>
         {text.name}
       </p>

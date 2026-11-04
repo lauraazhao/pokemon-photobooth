@@ -14,6 +14,9 @@ import goldEx from '../assets/cards/gold-ex.png'
 import darkEx from '../assets/cards/dark-ex.png'
 import fairyEx from '../assets/cards/fairy-ex.png'
 import skyEx from '../assets/cards/sky-ex.png'
+// Decorations that sit in front of the person (same size as the card, transparent elsewhere).
+import fairyExFront from '../assets/cards/fairy-ex-front.png'
+import goldExFront from '../assets/cards/gold-ex-front.png'
 
 export interface Box {
   x: number
@@ -29,6 +32,8 @@ export interface CardTemplate {
   name: string
   rarity: Rarity
   art: string
+  /** Optional layer drawn over the person: characters and bows that overlap the photo. */
+  front?: string
   width: number
   height: number
   /** Text color of the editable text. */
@@ -68,7 +73,7 @@ function exCard(
   id: string,
   name: string,
   art: string,
-  opts: { up?: boolean; color?: string; rarity?: Rarity } = {},
+  opts: { up?: boolean; color?: string; rarity?: Rarity; front?: string } = {},
 ): CardTemplate {
   const dy = opts.up ? -1 : 0
   return {
@@ -76,6 +81,7 @@ function exCard(
     name,
     rarity: opts.rarity ?? 'rare',
     art,
+    front: opts.front,
     width: 330,
     height: 459,
     color: opts.color ?? '#000',
@@ -97,9 +103,9 @@ export const CARDS: CardTemplate[] = [
   basicCard('basic-magenta', 'Magenta', basicMagenta),
   basicCard('basic-midnight', 'Midnight', basicMidnight),
   exCard('fire-ex', 'Fire ex', fireEx),
-  exCard('gold-ex', 'Gold ex', goldEx, { rarity: 'epic' }),
+  exCard('gold-ex', 'Gold ex', goldEx, { rarity: 'epic', front: goldExFront }),
   exCard('dark-ex', 'Dark ex', darkEx, { up: true, color: '#fff' }),
-  exCard('fairy-ex', 'Fairy ex', fairyEx, { up: true }),
+  exCard('fairy-ex', 'Fairy ex', fairyEx, { up: true, front: fairyExFront }),
   exCard('sky-ex', 'Sky ex', skyEx, { up: true }),
 ]
 

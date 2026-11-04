@@ -17,6 +17,7 @@ Open the printed localhost URL. The camera only works on `localhost` or over HTT
 
 - `src/lib/segmenter.ts`: MediaPipe selfie segmentation cuts the person out of each camera frame, in the browser.
 - `src/assets/cards/`: one PNG per card design, exported from the Figma "cards" section (node 854:17916) with the three "editable …" layers hidden (set them to 0% opacity rather than hiding, so auto-layout doesn't shift). Export at 2x.
+- `src/assets/cards/*-front.png`: optional card-sized transparent layers (bows, characters) drawn in front of the person; set `front` on the card in `src/lib/cards.ts`.
 - `src/lib/cards.ts`: the list of card designs and where the photo and editable text sit on each. To add a card, export its art and add one line here.
 - `src/lib/photoArea.ts`: draws the person (sharp, not dithered) onto the card's "photobooth picture" area.
 - `src/components/Card.tsx`: card art + person + editable text. Download uses `html-to-image`.
