@@ -281,11 +281,23 @@ export function playTick() {
   tone(c, master, { freq: 1760, decay: 0.07, gain: 0.08 })
 }
 
-/** The camera shutter when the photo is taken. */
+/**
+ * Camera snap when the photo is taken: the two-part "ka-chik" of a camera
+ * shutter (mirror flips up, shutter closes), each a sharp click with a little body.
+ */
 export function playShutter() {
   const c = audio()
   if (!c || !master) return
-  tone(c, master, { freq: 1320, decay: 0.12, gain: 0.08 })
-  burst(c, master, { dur: 0.04, gain: 0.3, type: 'highpass', from: 2000, attack: 0.001 })
-  burst(c, master, { at: 0.07, dur: 0.06, gain: 0.22, type: 'highpass', from: 1500, attack: 0.001 })
+  const click = (at: number, pitch: number, gain: number) => {
+    // Sharp transient.
+    burst(c, master!, { at, dur: 0.018, gain, type: 'highpass', from: 3500, attack: 0.0005 })
+    // Bright snap with a short metallic ring.
+    burst(c, master!, { at, dur: 0.05, gain: gain * 0.8, from: pitch, q: 4, attack: 0.0008 })
+    // Body: a low thunk from the mechanism.
+    tone(c, master!, { at, freq: 190, glideTo: 70, attack: 0.001, decay: 0.06, gain: gain * 0.7 })
+  }
+  click(0, 3200, 0.28)
+  click(0.075, 2400, 0.24)
+  // Faint mechanical rattle between and after the clicks.
+  burst(c, master, { at: 0.01, dur: 0.13, gain: 0.06, from: 1200, q: 2, attack: 0.002 })
 }
