@@ -182,6 +182,9 @@ export default function App() {
         )}
         {step === 'booth' && card && <Booth template={card} />}
       </main>
+      <a className="site-credit" href="https://laurazhao.com/" target="_blank" rel="noopener">
+        laurazhao.com
+      </a>
     </>
   )
 }
