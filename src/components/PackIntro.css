@@ -6,6 +6,8 @@
   width: min(680px, calc(100vw - 8px));
   height: auto;
   overflow: visible;
+  /* No inherited text shadow on the banner. */
+  text-shadow: none;
   /* The arc leaves empty space under its middle; pull the prompt up into it. */
   margin-bottom: calc(min(680px, 100vw - 8px) * -0.045);
 }
