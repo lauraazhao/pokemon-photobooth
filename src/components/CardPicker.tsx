@@ -29,14 +29,17 @@ export default function CardPicker({ onPick }: Props) {
       <ul className="picker-cards">
         {choices.map((card, i) => (
           <li key={card.id} style={{ animationDelay: `${i * 140}ms` }}>
-            <span className={`picker-void${picked === card.id ? ' is-picked' : ''}`} aria-hidden="true">
+            <span
+              className={`picker-void is-${card.rarity}${picked === card.id ? ' is-picked' : ''}`}
+              aria-hidden="true"
+            >
               <span className="picker-void-swirl" />
               <span className="picker-void-streaks" />
               <span className="picker-void-core" />
             </span>
             <button
               type="button"
-              className={`picker-card${picked === card.id ? ' is-picked' : ''}`}
+              className={`picker-card is-${card.rarity}${picked === card.id ? ' is-picked' : ''}`}
               onClick={() => pick(card)}
               disabled={picked !== null}
               aria-label={`Use the ${card.name} card`}

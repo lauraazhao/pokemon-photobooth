@@ -108,6 +108,38 @@
   background: radial-gradient(closest-side, #000 30%, rgba(20, 0, 40, 0.85) 60%, transparent 100%);
   animation: void-breathe 2.4s ease-in-out infinite;
 }
+/* Epic card: a bright golden void, dark bronze at the core so the card still stands out. */
+.picker-void.is-epic .picker-void-swirl {
+  background: conic-gradient(
+    from 0deg,
+    #ffd23a, #ff9a00, #fff4b8, #f0a800, #ffe680, #d97a00, #ffc61a, #fff8d6, #ffd23a
+  );
+  filter: blur(5px) saturate(1.4) brightness(1.08);
+}
+.picker-void.is-epic .picker-void-streaks {
+  background: repeating-conic-gradient(from 10deg, rgba(255, 250, 220, 0.85) 0deg 1.4deg, transparent 1.4deg 10deg);
+}
+.picker-void.is-epic .picker-void-core {
+  inset: 24%;
+  background: radial-gradient(closest-side, #2a0f00 22%, rgba(170, 70, 0, 0.75) 52%, transparent 88%);
+}
+.picker-void.is-epic::after {
+  /* soft golden glow around the edge */
+  content: '';
+  position: absolute;
+  inset: -12%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 214, 80, 0.55), transparent 75%);
+  z-index: -1;
+}
+
+/* A dark bronze halo keeps the gold card from melting into the gold void. */
+.picker-card.is-epic:hover:not(:disabled),
+.picker-card.is-epic:focus-visible,
+.has-pick .picker-card.is-epic.is-picked {
+  box-shadow: 0 0 0 2px rgba(70, 30, 0, 0.55), 0 0 18px 4px rgba(90, 35, 0, 0.55), 0 22px 44px rgba(60, 20, 0, 0.45);
+}
+
 @keyframes void-spin { to { rotate: 360deg; } }
 @keyframes void-breathe {
   0%, 100% { scale: 0.92; opacity: 0.9; }
