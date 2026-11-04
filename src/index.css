@@ -21,6 +21,10 @@
   --text: #f6f4ff;
   --text-muted: #c8cdf2;
   --accent: #e3350d;
+  /* Game UI: dark outlines, a light blue trim (like the title ribbon) and gold highlights. */
+  --ink: #1b2340;
+  --trim: #b4defa;
+  --gold: #edcb5c;
   font-family: var(--font-site);
   color: var(--text);
   background: #070b24;
@@ -115,7 +119,33 @@ button, .button {
   font: inherit; font-weight: 400; letter-spacing: 0.03em; text-shadow: none; padding: 12px 24px; border-radius: 999px;
   border: 2px solid #1d1d1f; background: #fff; color: #1d1d1f; cursor: pointer; text-decoration: none;
 }
-.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+/* Chunky, pressable game buttons: a dark outline, a solid "base" under them, and they sink when pressed. */
+:is(.actions, .panel) button:where(:not(.capture-button, .effect-option)),
+button.primary {
+  position: relative;
+  padding: 11px 24px 13px;
+  border: 3px solid var(--ink);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--ink);
+  box-shadow: inset 0 -4px 0 #cdd5e6, inset 0 3px 0 #fff, 0 4px 0 var(--ink);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.15s ease;
+}
+button.primary {
+  background: var(--accent);
+  color: #fff;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 -4px 0 #a32406, inset 0 3px 0 rgba(255, 255, 255, 0.35), 0 4px 0 var(--ink);
+}
+:is(.actions, .panel) button:where(:not(.capture-button, .effect-option)):hover:not(:disabled),
+button.primary:hover:not(:disabled) { filter: brightness(1.06); transform: translateY(-1px); }
+:is(.actions, .panel) button:where(:not(.capture-button, .effect-option)):active:not(:disabled),
+button.primary:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: inset 0 -2px 0 #cdd5e6, inset 0 3px 0 #fff, 0 0 0 var(--ink);
+}
+button.primary:active:not(:disabled) { box-shadow: inset 0 -2px 0 #a32406, inset 0 3px 0 rgba(255, 255, 255, 0.35), 0 0 0 var(--ink); }
+:is(.actions, .panel) button:focus-visible, button.primary:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 button:disabled { opacity: .5; cursor: not-allowed; }
 
 /* The card stays centered; the side panels open in the column to its right
@@ -139,14 +169,16 @@ button:disabled { opacity: .5; cursor: not-allowed; }
   flex: 1 1 280px;
   max-width: 360px;
   padding: 28px;
-  background: rgba(255, 255, 255, 0.96);
-  color: #1d1d1f;
+  /* A game dialog box: dark outline, a white gap, then a light blue inner trim, and a hard drop shadow. */
+  background: #fffdf6;
+  color: var(--ink);
   text-shadow: none;
-  border: 0;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.2);
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 6px var(--trim), 6px 6px 0 rgba(0, 0, 0, 0.55);
 }
 .panel h2 { margin: 0 0 4px; font-size: 1.15rem; font-weight: 400; }
+.panel h2::before { content: '★'; margin-right: 8px; color: var(--gold); -webkit-text-stroke: 1.5px var(--ink); }
 .panel-hint { margin: 0 0 20px; color: #666; font-family: var(--font-sub); font-size: 1rem; }
 .editor fieldset { margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 16px; }
 @media (max-width: 720px) { .panel { max-width: 330px; } }
@@ -155,11 +187,11 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .editor-count { font-weight: 400; color: #888; font-family: var(--font-sub); }
 .editor input, .editor textarea {
   /* What people type stays in a plain font so it's easy to read and edit. */
-  font: inherit; font-family: var(--font-plain); font-size: 0.84rem; padding: 10px 12px; border: 1px solid rgba(0, 0, 0, 0.14); border-radius: 10px; background: #fff; resize: vertical;
+  font: inherit; font-family: var(--font-plain); font-size: 0.84rem; padding: 10px 12px; border: 2px solid var(--ink); border-radius: 8px; background: #fff; color: var(--ink); box-shadow: inset 0 3px 0 rgba(27, 35, 64, 0.08); resize: vertical;
 }
 /* Phones zoom into fields under 16px when tapped, so they keep the bigger size there. */
 @media (pointer: coarse) { .editor input, .editor textarea { font-size: 1rem; } }
-.editor input:focus, .editor textarea:focus { outline: 2px solid rgba(227, 53, 13, 0.3); outline-offset: 1px; border-color: transparent; }
+.editor input:focus, .editor textarea:focus { outline: 3px solid var(--trim); outline-offset: 0; }
 
 .fade-in { animation: fade-in 0.6s ease-out both; }
 @keyframes fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
@@ -230,11 +262,15 @@ button:disabled { opacity: .5; cursor: not-allowed; }
   border-radius: 50%;
   background: var(--accent);
   color: #fff;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: 3px solid var(--ink);
+  box-shadow: inset 0 -5px 0 #a32406, inset 0 4px 0 rgba(255, 255, 255, 0.35), 0 5px 0 var(--ink), 0 10px 20px rgba(0, 0, 0, 0.4);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
-.capture-button:hover:not(:disabled) .capture-icon { transform: scale(1.06); }
-.capture-button:active:not(:disabled) .capture-icon { transform: scale(0.94); }
+.capture-button:hover:not(:disabled) .capture-icon { transform: translateY(-2px); }
+.capture-button:active:not(:disabled) .capture-icon {
+  transform: translateY(5px);
+  box-shadow: inset 0 -3px 0 #a32406, inset 0 4px 0 rgba(255, 255, 255, 0.35), 0 0 0 var(--ink), 0 4px 10px rgba(0, 0, 0, 0.4);
+}
 .capture-button:focus-visible { outline: none; }
 .capture-button:focus-visible .capture-icon { box-shadow: 0 0 0 4px #fff, 0 0 0 7px #3b6fd8; }
 
@@ -260,11 +296,12 @@ button:disabled { opacity: .5; cursor: not-allowed; }
   width: 100%;
   height: auto;
   border-radius: 8px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.14);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 0 0 2px var(--ink), 0 4px 0 var(--ink);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
 }
 .effect-option:hover .effect-thumb { transform: translateY(-2px); }
-.effect-option.selected .effect-thumb { box-shadow: 0 0 0 3px var(--accent); }
+.effect-option:active .effect-thumb { transform: translateY(3px); box-shadow: 0 0 0 2px var(--ink), 0 1px 0 var(--ink); }
+.effect-option.selected .effect-thumb { box-shadow: 0 0 0 2px var(--ink), 0 0 0 6px var(--gold), 0 0 0 8px var(--ink); }
 .effect-option:focus-visible { outline: none; }
 .effect-option:focus-visible .effect-thumb { box-shadow: 0 0 0 3px #3b6fd8; }
 /* The start screen sits close to the top so the full-size pack fits above the fold. */
