@@ -67,6 +67,8 @@
   75% { left: 100%; opacity: 1; transform: translateY(0) rotate(8deg); }
   100% { left: 100%; opacity: 0; transform: translateY(6px) rotate(8deg); }
 }
+.pack-holo { transition: opacity 0.2s; }
+.pack-dragging .pack-holo, .pack-ripped .pack-holo, .pack-pulling .pack-holo, .pack-fading .pack-holo { opacity: 0; }
 .pack-dragging .pack-hint, .pack-ripped .pack-hint, .pack-pulling .pack-hint, .pack-fading .pack-hint { opacity: 0; }
 
 /* Pulling: three cards shoot up out of the opening, blurred into streaks of light.

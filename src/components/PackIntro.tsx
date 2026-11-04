@@ -1,6 +1,7 @@
 import { useRef, useState, type CSSProperties, type PointerEvent } from 'react'
 import { playRip, playWhoosh, startTear, unlockAudio } from '../lib/sfx'
 import packUrl from '../assets/pack/card-pack.png'
+import './Card.css'
 import './PackIntro.css'
 
 /** Pack size in Figma ("card pack", node 843:16734). */
@@ -166,6 +167,12 @@ export default function PackIntro({ onOpened }: Props) {
         </div>
         <div className="pack-layer pack-body" style={{ backgroundImage: `url(${packUrl})`, clipPath: BODY_CLIP }} />
         <div className="pack-layer pack-top" style={topStyle} />
+        {/* The same holo sweep as the rare cards (styles in Card.css), shaped to the pack; gone once you start ripping. */}
+        <div
+          className="card-holo pack-holo"
+          style={{ WebkitMaskImage: `url(${packUrl})`, maskImage: `url(${packUrl})` }}
+          aria-hidden="true"
+        />
         <div className="pack-hint" aria-hidden="true">
           <div className="pack-hint-line" />
           <svg className="pack-hint-finger" viewBox="0 0 26 32" width="36" height="44">
