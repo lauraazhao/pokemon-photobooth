@@ -30,6 +30,13 @@ export default function Gallery({ fresh = false }: { fresh?: boolean }) {
       <h2 id="gallery-title" className="gallery-title">
         Gallery
       </h2>
+      <p className="gallery-removal">
+        Please{' '}
+        <a href="https://laurazhao.com/" target="_blank" rel="noopener">
+          contact me
+        </a>{' '}
+        if you want your photo removed.
+      </p>
       {failed ? (
         <p className="notice">The gallery couldn’t load right now.</p>
       ) : entries === null ? (

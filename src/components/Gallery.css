@@ -24,6 +24,8 @@
   pointer-events: none;
 }
 .gallery-title { margin: 0; font-size: 1.6rem; }
+.gallery-removal { margin: -10px 0 8px; color: var(--text-muted); font-family: var(--font-sub); font-size: 0.9rem; text-align: center; }
+.gallery-removal a { color: inherit; }
 .gallery-grid {
   list-style: none;
   margin: 0;
