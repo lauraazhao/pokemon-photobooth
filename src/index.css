@@ -55,7 +55,7 @@ h1 { margin: 0; font-size: 1.75rem; }
   clip-path: inset(50%);
   white-space: nowrap;
 }
-.logo img { display: block; width: min(280px, 70vw); height: auto; }
+.logo img { display: block; width: min(420px, 85vw); height: auto; }
 .stage { position: relative; }
 .countdown {
   position: absolute; inset: 0; display: grid; place-items: center;

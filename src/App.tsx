@@ -165,7 +165,7 @@ export default function App() {
         <h1 className="visually-hidden">Photomon!</h1>
       ) : (
         <h1 className="logo fade-in">
-          <img src={logoUrl} alt="Photomon!" width={280} height={68} />
+          <img src={logoUrl} alt="Photomon!" width={420} height={102} />
         </h1>
       )}
       {step === 'pack' && <PackIntro onOpened={() => setStep('pick')} />}
