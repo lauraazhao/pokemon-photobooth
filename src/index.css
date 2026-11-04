@@ -1,11 +1,33 @@
+/* Comico: the site's display font. Uses the installed font if there is one,
+   otherwise public/fonts/Comico-Regular.woff2 when that file is added. */
+@font-face {
+  font-family: 'Comico';
+  src: local('Comico'), local('Comico Regular'), local('Comico-Regular'), url('/fonts/Comico-Regular.woff2') format('woff2');
+  font-display: swap;
+}
+
 :root {
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  color: #1d1d1f;
-  background: #f4f1ea;
+  --font-site: 'Comico', 'Lato', system-ui, sans-serif;
+  --font-plain: 'Lato', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --text: #f6f4ff;
+  --text-muted: #c8cdf2;
   --accent: #e3350d;
+  font-family: var(--font-site);
+  color: var(--text);
+  background: #070b24;
 }
 * { box-sizing: border-box; }
-body { margin: 0; min-height: 100vh; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  /* Starfield, darkened a touch at the top and bottom so text stays readable. */
+  background:
+    linear-gradient(180deg, rgba(4, 6, 24, 0.45), rgba(4, 6, 24, 0.1) 30%, rgba(4, 6, 24, 0.1) 70%, rgba(4, 6, 24, 0.5)),
+    url('./assets/site/space-bg.jpg') center / cover fixed no-repeat,
+    #070b24;
+}
+/* Site copy sits on a busy background: a soft shadow keeps it crisp. */
+main { text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75), 0 0 12px rgba(0, 0, 0, 0.45); }
 main {
   max-width: 960px;
   margin: 0 auto;
@@ -15,6 +37,7 @@ main {
   align-items: center;
   gap: 16px;
 }
+h1, h2 { font-weight: 400; }
 h1 { margin: 0; font-size: 1.75rem; }
 .logo { line-height: 0; }
 .visually-hidden {
@@ -32,10 +55,10 @@ h1 { margin: 0; font-size: 1.75rem; }
   font-size: 6rem; font-weight: 700; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.5);
   pointer-events: none;
 }
-.notice { margin: 0; text-align: center; color: #555; }
+.notice { margin: 0; text-align: center; color: var(--text-muted); }
 .actions { display: flex; gap: 12px; }
 button, .button {
-  font: inherit; font-weight: 600; padding: 12px 24px; border-radius: 999px;
+  font: inherit; font-weight: 400; letter-spacing: 0.03em; text-shadow: none; padding: 12px 24px; border-radius: 999px;
   border: 2px solid #1d1d1f; background: #fff; color: #1d1d1f; cursor: pointer; text-decoration: none;
 }
 .primary { background: var(--accent); border-color: var(--accent); color: #fff; }
@@ -54,19 +77,23 @@ button:disabled { opacity: .5; cursor: not-allowed; }
   flex: 1 1 280px;
   max-width: 360px;
   padding: 20px;
-  background: #fff;
-  border: 2px solid #1d1d1f;
+  background: rgba(255, 255, 255, 0.96);
+  color: #1d1d1f;
+  text-shadow: none;
+  border: 0;
   border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
-.panel h2 { margin: 0 0 4px; font-size: 1.15rem; }
+.panel h2 { margin: 0 0 4px; font-size: 1.15rem; font-weight: 400; }
 .panel-hint { margin: 0 0 16px; color: #666; font-size: 0.9rem; }
 .editor fieldset { margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 12px; }
 @media (max-width: 720px) { .panel { max-width: 330px; } }
 .editor-field { display: flex; flex-direction: column; gap: 4px; }
-.editor-field label { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; }
+.editor-field label { display: flex; justify-content: space-between; font-weight: 400; font-size: 0.9rem; }
 .editor-count { font-weight: 400; color: #777; }
 .editor input, .editor textarea {
-  font: inherit; padding: 8px 12px; border: 2px solid #1d1d1f; border-radius: 10px; background: #fff; resize: vertical;
+  /* What people type stays in a plain font so it's easy to read and edit. */
+  font: inherit; font-family: var(--font-plain); padding: 8px 12px; border: 2px solid #1d1d1f; border-radius: 10px; background: #fff; resize: vertical;
 }
 .editor input:focus, .editor textarea:focus { outline: 3px solid rgba(227, 53, 13, 0.35); outline-offset: 1px; }
 

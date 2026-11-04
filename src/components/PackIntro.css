@@ -1,8 +1,8 @@
 .pack-intro { display: flex; flex-direction: column; align-items: center; gap: 28px; }
 
 .pack-prompt { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
-.pack-prompt strong { font-size: 1.25rem; }
-.pack-prompt span { color: #666; }
+.pack-prompt strong { font-size: 1.35rem; font-weight: 400; letter-spacing: 0.02em; }
+.pack-prompt span { color: var(--text-muted); }
 .pack-ripped .pack-prompt, .pack-pulling .pack-prompt, .pack-fading .pack-prompt { opacity: 0; transition: opacity 0.3s; }
 
 .pack {

@@ -1,9 +1,4 @@
 /* Card text styles from Figma. Positions come from src/lib/cards.ts. */
-@font-face {
-  font-family: 'Comico';
-  src: local('Comico'), local('Comico Regular'), url('/fonts/Comico-Regular.woff2') format('woff2');
-  font-display: swap;
-}
 /* Pin the card body text to the regular Gill Sans face (by its PostScript names),
    so browsers can't pick a heavier face of the family. Falls back to Lato. */
 @font-face {
@@ -19,6 +14,7 @@
   position: relative;
   flex: none;
   font-family: var(--font-body);
+  text-shadow: none;
 }
 .card-art {
   position: absolute;
