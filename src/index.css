@@ -191,3 +191,41 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .capture-button:active:not(:disabled) .capture-icon { transform: scale(0.94); }
 .capture-button:focus-visible { outline: none; }
 .capture-button:focus-visible .capture-icon { box-shadow: 0 0 0 4px #fff, 0 0 0 7px #3b6fd8; }
+
+/* Photo effects: a row of previews under the card that scrolls sideways. */
+.effect-bar {
+  display: flex;
+  gap: 10px;
+  max-width: min(100%, calc(100vw - 32px));
+  overflow-x: auto;
+  padding: 4px 4px 8px;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+.effect-option {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font-size: 0.8rem;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+  scroll-snap-align: start;
+}
+.effect-thumb {
+  display: block;
+  height: 64px;
+  width: auto;
+  border-radius: 8px;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25), 0 4px 10px rgba(0, 0, 0, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.effect-option:hover .effect-thumb { transform: translateY(-2px); }
+.effect-option.selected .effect-thumb { box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--accent); }
+.effect-option:focus-visible { outline: none; }
+.effect-option:focus-visible .effect-thumb { box-shadow: 0 0 0 3px #fff, 0 0 0 6px #3b6fd8; }

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { ImageSegmenter } from '@mediapipe/tasks-vision'
 import Card from './components/Card'
 import CardTextEditor from './components/CardTextEditor'
@@ -9,6 +9,8 @@ import type { CardTemplate } from './lib/cards'
 import { useCamera } from './lib/useCamera'
 import { cutOutPerson, loadSegmenter } from './lib/segmenter'
 import { renderPerson } from './lib/photoArea'
+import { renderPhoto, type EffectId } from './lib/effects'
+import EffectBar from './components/EffectBar'
 import logoUrl from './assets/brand/photomon-logo.png'
 import Meteors from './components/Meteors'
 import { canvasToBlob, renderCard } from './lib/renderCard'
@@ -54,7 +56,8 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
   const { videoRef, status } = useCamera()
   const cardRef = useRef<HTMLDivElement>(null)
   const photoRef = useRef<HTMLCanvasElement>(null)
-  const cutoutRef = useRef<HTMLCanvasElement>(document.createElement('canvas'))
+  // The latest cutout of the person (live), or the captured one.
+  const [cutout] = useState(() => document.createElement('canvas'))
   const maskRef = useRef<HTMLCanvasElement>(document.createElement('canvas'))
   const [segmenter, setSegmenter] = useState<ImageSegmenter | null>(null)
   const [segmenterError, setSegmenterError] = useState(false)
@@ -62,6 +65,27 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
   const [countdown, setCountdown] = useState<number | null>(null)
   const [saving, setSaving] = useState(false)
   const [cardData, setCardData] = useState(() => cardDataFor(template))
+  const [effect, setEffect] = useState<EffectId>('none')
+  // Bumped on every capture so the effect previews redraw with the new photo.
+  const [shot, setShot] = useState(0)
+  // The card art, so color effects can tint the photo's background too.
+  const [art, setArt] = useState<HTMLImageElement | null>(null)
+  useEffect(() => {
+    const img = new Image()
+    img.src = template.art
+    img.decode().then(() => setArt(img), () => {})
+  }, [template.art])
+  const photoBase = useMemo(
+    () => ({
+      width: template.photo.w,
+      height: template.photo.h,
+      person: cutout,
+      art,
+      cardWidth: template.width,
+      photoBox: template.photo,
+    }),
+    [template, art, cutout],
+  )
 
   useEffect(() => {
     loadSegmenter().then(setSegmenter, (e) => {
@@ -78,7 +102,7 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
       renderPerson(canvas, { width: template.photo.w, height: template.photo.h, person, mirror: true, scale: SCALE })
 
     if (mode === 'captured') {
-      draw(cutoutRef.current)
+      renderPhoto(canvas, { ...photoBase, effect, scale: SCALE })
       return
     }
     let raf = 0
@@ -93,8 +117,8 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
       if (video.currentTime === lastTime) return
       lastTime = video.currentTime
       if (segmenter) {
-        cutOutPerson(segmenter, video, video.videoWidth, video.videoHeight, cutoutRef.current, maskRef.current, performance.now())
-        draw(cutoutRef.current)
+        cutOutPerson(segmenter, video, video.videoWidth, video.videoHeight, cutout, maskRef.current, performance.now())
+        draw(cutout)
       } else {
         // Model still loading (or failed): show the plain camera feed.
         draw(video)
@@ -102,7 +126,7 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
     }
     tick()
     return () => cancelAnimationFrame(raf)
-  }, [mode, status, segmenter, template, videoRef])
+  }, [mode, status, segmenter, template, videoRef, photoBase, effect, shot, cutout])
 
   const takePhoto = useCallback(() => {
     let n = 3
@@ -120,14 +144,15 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
       // Without the model, freeze the raw frame instead of a cutout.
       const video = videoRef.current
       if (!segmenter && video) {
-        const c = cutoutRef.current
+        const c = cutout
         c.width = video.videoWidth
         c.height = video.videoHeight
         c.getContext('2d')!.drawImage(video, 0, 0)
       }
+      setShot((s) => s + 1)
       setMode('captured')
     }, 1000)
-  }, [segmenter, videoRef])
+  }, [segmenter, videoRef, cutout])
 
   const renderCardFile = useCallback(async (): Promise<File | null> => {
     if (!cardRef.current) return null
@@ -141,7 +166,7 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
   // The share sheet has to open right after the tap, so on phones the PNG is
   // rendered ahead of time (and again whenever the text changes).
   const [readyFile, setReadyFile] = useState<{ file: File; key: string } | null>(null)
-  const fileKey = mode === 'captured' ? JSON.stringify(cardData) : null
+  const fileKey = mode === 'captured' ? JSON.stringify([cardData, effect, shot]) : null
   useEffect(() => {
     if (!canShare || !fileKey) return
     let cancelled = false
@@ -201,6 +226,7 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
               {segmenterError ? 'Background removal is unavailable in this browser.' : 'Loading background removal…'}
             </p>
           )}
+          {mode === 'captured' && <EffectBar base={photoBase} width={template.width} value={effect} onChange={setEffect} version={shot} />}
           <div className="actions">
             {mode === 'live' ? (
               <button className="capture-button" onClick={takePhoto} disabled={status !== 'live' || countdown !== null}>
