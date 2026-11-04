@@ -3,7 +3,7 @@
 .pack-prompt { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
 .pack-prompt strong { font-size: 1.25rem; }
 .pack-prompt span { color: #666; }
-.pack-ripped .pack-prompt, .pack-fading .pack-prompt { opacity: 0; transition: opacity 0.3s; }
+.pack-ripped .pack-prompt, .pack-pulling .pack-prompt, .pack-fading .pack-prompt { opacity: 0; transition: opacity 0.3s; }
 
 .pack {
   position: relative;
@@ -36,7 +36,7 @@
    and flies off once ripped. */
 .pack-top { transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.3, 1.2), opacity 0.5s; }
 .pack-dragging .pack-top { transition: none; }
-.pack-ripped .pack-top, .pack-fading .pack-top {
+.pack-ripped .pack-top, .pack-pulling .pack-top, .pack-fading .pack-top {
   opacity: 0;
   transition: transform 0.55s cubic-bezier(0.3, 0, 0.6, 1), opacity 0.55s ease-in;
 }
@@ -70,12 +70,68 @@
   75% { left: 100%; opacity: 1; transform: scale(1); }
   100% { left: 100%; opacity: 0; transform: scale(0.8); }
 }
-.pack-dragging .pack-hint, .pack-ripped .pack-hint, .pack-fading .pack-hint { opacity: 0; }
+.pack-dragging .pack-hint, .pack-ripped .pack-hint, .pack-pulling .pack-hint, .pack-fading .pack-hint { opacity: 0; }
 
-/* Fading: the opened pack fades away. */
-.pack-fading .pack-body { animation: pack-fade 0.6s ease-in forwards; }
+/* Pulling: three cards shoot up out of the opening, blurred into streaks of light.
+   They start tucked inside the pack (behind the body) with their tops at the seam. */
+.pack-pull {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.pack-pull-card {
+  position: absolute;
+  left: 9%;
+  width: 82%;
+  aspect-ratio: 330 / 460;
+  top: var(--seam);
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 244, 200, 0.85) 45%, rgba(255, 210, 120, 0) 100%),
+    linear-gradient(90deg, #ffd1f5, #b9e6ff, #fff3a8);
+  box-shadow: 0 0 24px 6px rgba(255, 240, 200, 0.8);
+  opacity: 0;
+  transform-origin: 50% 100%;
+}
+.pack-pulling .pack-pull-card,
+.pack-fading .pack-pull-card {
+  animation: card-whoosh 0.32s cubic-bezier(0.55, 0, 0.9, 0.45) both;
+  animation-delay: calc(var(--i) * 85ms);
+}
+@keyframes card-whoosh {
+  0% { opacity: 1; transform: translateY(0) scaleY(1); filter: blur(0); }
+  25% { opacity: 1; transform: translateY(-25%) scaleY(1.6); filter: blur(3px); }
+  100% { opacity: 0.9; transform: translateY(-260vh) scaleY(3.2); filter: blur(10px); }
+}
+/* A burst of light at the opening as the cards leave. */
+.pack-pull-flash {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  top: calc(var(--seam) - 40px);
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.95), rgba(255, 236, 170, 0.6) 50%, transparent);
+  opacity: 0;
+}
+.pack-pulling .pack-pull-flash { animation: pull-flash 0.5s ease-out both; }
+@keyframes pull-flash {
+  0% { opacity: 0; transform: scale(0.4); }
+  25% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1.4); }
+}
+/* The pack gives a little kick as the cards are yanked out. */
+.pack-pulling .pack-body { animation: pack-kick 0.3s ease-out; }
+@keyframes pack-kick {
+  0% { transform: none; }
+  30% { transform: translateY(8px) scaleY(0.98); }
+  100% { transform: none; }
+}
+
+/* Fading: the empty pack drops away. */
+.pack-fading .pack-body { animation: pack-fade 0.35s ease-in forwards; }
 @keyframes pack-fade {
-  to { opacity: 0; transform: scale(1.04) translateY(10px); }
+  to { opacity: 0; transform: scale(0.96) translateY(40px); }
 }
 
 @media (prefers-reduced-motion: reduce) {

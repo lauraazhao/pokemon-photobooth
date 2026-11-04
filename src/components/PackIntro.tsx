@@ -11,7 +11,7 @@ const SEAM_PCT = (SEAM_Y / PACK_H) * 100
 /** How far (as a share of the pack width) a swipe must travel to rip it open. */
 const RIP_DISTANCE = 0.55
 
-type Phase = 'idle' | 'dragging' | 'ripped' | 'fading'
+type Phase = 'idle' | 'dragging' | 'ripped' | 'pulling' | 'fading'
 
 /** Jagged tear line across the pack, as [x%, y%] points from left to right. */
 function tearLine(): [number, number][] {
@@ -52,9 +52,12 @@ export default function PackIntro({ onOpened }: Props) {
     setDir(direction)
     setProgress(1)
     setPhase('ripped')
-    // Timings match the transitions in PackIntro.css.
-    setTimeout(() => setPhase('fading'), reduced ? 0 : 550)
-    setTimeout(onOpened, reduced ? 0 : 1150)
+    // Timings match the animations in PackIntro.css: the strip flies off,
+    // three cards shoot up out of the pack too fast to see, then the pack fades.
+    if (reduced) return setTimeout(onOpened, 0)
+    setTimeout(() => setPhase('pulling'), 300)
+    setTimeout(() => setPhase('fading'), 800)
+    setTimeout(onOpened, 1150)
   }
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
@@ -90,7 +93,7 @@ export default function PackIntro({ onOpened }: Props) {
     clipPath: TOP_CLIP,
     transformOrigin: `${dir === 1 ? 100 : 0}% ${SEAM_PCT}%`,
     transform:
-      phase === 'ripped' || phase === 'fading'
+      phase === 'ripped' || phase === 'pulling' || phase === 'fading'
         ? `translate(${dir * 150}px, -110px) rotate(${dir * 30}deg)`
         : `translateY(${-3 * progress}px) rotate(${dir * 7 * progress}deg)`,
   }
@@ -118,6 +121,13 @@ export default function PackIntro({ onOpened }: Props) {
           }
         }}
       >
+ {/* Cards that whoosh out of the opening; behind the pack body so they rise out of it. */}
+        <div className="pack-pull" aria-hidden="true">
+          {[0, 1, 2].map((i) => (
+            <span key={i} className="pack-pull-card" style={{ '--i': i } as CSSProperties} />
+          ))}
+          <span className="pack-pull-flash" />
+        </div>
         <div className="pack-layer pack-body" style={{ backgroundImage: `url(${packUrl})`, clipPath: BODY_CLIP }} />
         <div className="pack-layer pack-top" style={topStyle} />
         <div className="pack-hint" aria-hidden="true">

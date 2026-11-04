@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import Card from './Card'
 import { pullCards, type CardTemplate } from '../lib/cards'
 import './CardPicker.css'
@@ -28,7 +28,7 @@ export default function CardPicker({ onPick }: Props) {
       </h2>
       <ul className="picker-cards">
         {choices.map((card, i) => (
-          <li key={card.id} style={{ animationDelay: `${i * 140}ms` }}>
+          <li key={card.id} style={{ animationDelay: `${i * 110}ms`, '--spin': `${[-16, 9, 18][i]}deg` } as CSSProperties}>
             <span
               className={`picker-void is-${card.rarity}${picked === card.id ? ' is-picked' : ''}`}
               aria-hidden="true"
