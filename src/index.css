@@ -84,6 +84,9 @@ h1 { margin: 0; font-size: 1.75rem; }
 }
 .stage-view.zoomed { width: calc(var(--card-w) * var(--zoom)); height: calc(var(--focus-h) * var(--zoom)); }
 .stage-view.zoomed .stage { transform: scale(var(--zoom)); }
+/* Editing on a phone: the whole card, a little smaller, so the edit panel peeks in below. */
+.stage-view.fitted { width: calc(var(--card-w) * var(--edit-zoom)); height: calc(var(--card-h) * var(--edit-zoom)); }
+.stage-view.fitted .stage { transform: scale(var(--edit-zoom)); }
 @media (prefers-reduced-motion: reduce) { .stage, .stage-view { transition: none; } }
 /* While posing, everything from the camera button down sits on black, over the lower half of the card. */
 .camera-dock { position: relative; z-index: 1; isolation: isolate; padding: 8px 0 24px; }
@@ -262,3 +265,7 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .effect-option.selected .effect-thumb { box-shadow: 0 0 0 3px var(--accent); }
 .effect-option:focus-visible { outline: none; }
 .effect-option:focus-visible .effect-thumb { box-shadow: 0 0 0 3px #3b6fd8; }
+/* The start screen sits close to the top so the full-size pack fits above the fold. */
+main.is-start { padding-top: 12px; }
+/* On narrower screens the curved title reaches the corner, so drop it below the sound button. */
+@media (max-width: 800px) { main.is-start { padding-top: 52px; } }

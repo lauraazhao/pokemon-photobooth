@@ -71,6 +71,8 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
   // How big the card is while posing: its top half as big as fits above the camera button (up to 1.6×).
   const viewRef = useRef<HTMLDivElement>(null)
   const [zoom, setZoom] = useState(1)
+  // While editing on a phone, the card shrinks so the top of the edit panel shows below it without scrolling.
+  const [editZoom, setEditZoom] = useState(1)
   useLayoutEffect(() => {
     // The part of the card shown in full while posing: down to just below the photo.
     const focusH = template.photo.y + template.photo.h + 16
@@ -81,6 +83,10 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
       const byWidth = (window.innerWidth - 16) / template.width
       // On short phone screens the card shrinks a little so the button stays on screen.
       setZoom(Math.max(0.75, Math.min(1.6, byHeight, byWidth)))
+      // Single-column layout: leave room for Retake/Next and about 170px of the edit panel.
+      const stacked = window.innerWidth <= 1120
+      const editFit = (window.innerHeight - top - 100 - 170) / template.height
+      setEditZoom(stacked ? Math.max(0.6, Math.min(1, editFit, byWidth)) : 1)
     }
     fit()
     window.addEventListener('resize', fit)
@@ -260,13 +266,14 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
           {/* While posing, the card is enlarged; its lower half sits under the black band with the camera button. */}
           <div
             ref={viewRef}
-            className={mode === 'live' ? 'stage-view zoomed' : 'stage-view'}
+            className={mode === 'live' ? 'stage-view zoomed' : mode === 'captured' && editZoom < 1 ? 'stage-view fitted' : 'stage-view'}
             style={
               {
                 '--card-w': `${template.width}px`,
                 '--card-h': `${template.height}px`,
                 '--focus-h': `${template.photo.y + template.photo.h + 16}px`,
                 '--zoom': zoom,
+                '--edit-zoom': editZoom,
               } as CSSProperties
             }
           >
@@ -353,7 +360,7 @@ function Photobooth() {
     <>
       <Meteors />
       <SoundToggle />
-      <main>
+      <main className={step === 'pack' ? 'is-start' : undefined}>
         {/* The pack already shows the logo, so the header only appears after it's opened. */}
         {step === 'pack' ? (
           <h1 className="visually-hidden">Photomon!</h1>

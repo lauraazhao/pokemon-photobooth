@@ -140,7 +140,7 @@ export default function PackIntro({ onOpened }: Props) {
     <div className={`pack-intro pack-${phase}`}>
       <p className="pack-prompt">
         {/* Arched like the Photomon! logo. */}
-        <svg className="pack-title" viewBox="0 0 640 120" role="img" aria-label="Trading Card Photobooth">
+        <svg className="pack-title" viewBox="0 18 640 102" role="img" aria-label="Trading Card Photobooth">
           <path id="pack-title-arc" d="M 10 110 Q 320 20 630 110" fill="none" />
           <text textAnchor="middle">
             <textPath href="#pack-title-arc" startOffset="50%">
