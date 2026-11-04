@@ -10,7 +10,7 @@ function Thumb({ base, effect, version }: { base: Base; effect: EffectId; versio
   useEffect(() => {
     const canvas = ref.current
     if (!canvas) return
-    const scale = (64 * (window.devicePixelRatio || 1)) / base.height
+    const scale = (110 * (window.devicePixelRatio || 1)) / base.height
     const photo = document.createElement('canvas')
     renderPhoto(photo, { ...base, effect, scale })
     canvas.width = photo.width
@@ -37,7 +37,9 @@ interface Props {
 
 export default function EffectBar({ base, value, onChange, version }: Props) {
   return (
-    <div className="effect-bar" role="radiogroup" aria-label="Photo effects">
+    <div className="effect-section">
+      <p className="effect-heading" id="effect-heading">Filter</p>
+      <div className="effect-bar" role="radiogroup" aria-labelledby="effect-heading">
       {EFFECTS.map((e) => (
         <button
           key={e.id}
@@ -54,6 +56,7 @@ export default function EffectBar({ base, value, onChange, version }: Props) {
           <span>{e.label}</span>
         </button>
       ))}
+      </div>
     </div>
   )
 }

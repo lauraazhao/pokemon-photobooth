@@ -91,7 +91,8 @@ h1 { margin: 0; font-size: 1.75rem; }
   pointer-events: none;
 }
 .countdown {
-  position: absolute; inset: 0; display: grid; place-items: center;
+  /* Placed over the photo frame (left/top/size come from the card). */
+  position: absolute; display: grid; place-items: center;
   font-size: 6rem; font-weight: 700; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.5);
   pointer-events: none;
 }
@@ -142,8 +143,10 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .editor-count { font-weight: 400; color: #888; font-family: var(--font-sub); }
 .editor input, .editor textarea {
   /* What people type stays in a plain font so it's easy to read and edit. */
-  font: inherit; font-family: var(--font-plain); font-size: 1rem; padding: 10px 12px; border: 1px solid rgba(0, 0, 0, 0.14); border-radius: 10px; background: #fff; resize: vertical;
+  font: inherit; font-family: var(--font-plain); font-size: 0.84rem; padding: 10px 12px; border: 1px solid rgba(0, 0, 0, 0.14); border-radius: 10px; background: #fff; resize: vertical;
 }
+/* Phones zoom into fields under 16px when tapped, so they keep the bigger size there. */
+@media (pointer: coarse) { .editor input, .editor textarea { font-size: 1rem; } }
 .editor input:focus, .editor textarea:focus { outline: 2px solid rgba(227, 53, 13, 0.3); outline-offset: 1px; border-color: transparent; }
 
 .fade-in { animation: fade-in 0.6s ease-out both; }
@@ -221,39 +224,32 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .capture-button:focus-visible { outline: none; }
 .capture-button:focus-visible .capture-icon { box-shadow: 0 0 0 4px #fff, 0 0 0 7px #3b6fd8; }
 
-/* Photo effects: a row of previews under the card that scrolls sideways. */
-.effect-bar {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  max-width: calc(100vw - 32px);
-  overflow-x: auto;
-  padding: 4px 4px 8px;
-  scrollbar-width: thin;
-}
+/* Photo filters: a 2×2 grid of previews in the edit panel. */
+.effect-section { margin-top: 20px; display: flex; flex-direction: column; gap: 6px; }
+.effect-heading { margin: 0; font-size: 0.9rem; }
+.effect-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .effect-option {
-  flex: none;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 6px;
   padding: 0;
   border: 0;
+  border-radius: 10px;
   background: none;
-  color: var(--text);
+  color: inherit;
   font-size: 0.8rem;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75);
+  text-shadow: none;
 }
 .effect-thumb {
   display: block;
-  height: 64px;
-  width: auto;
+  width: 100%;
+  height: auto;
   border-radius: 8px;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.25), 0 4px 10px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.14);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-@media (max-width: 480px) { .effect-bar { gap: 8px; } .effect-thumb { height: 48px; } }
 .effect-option:hover .effect-thumb { transform: translateY(-2px); }
-.effect-option.selected .effect-thumb { box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--accent); }
+.effect-option.selected .effect-thumb { box-shadow: 0 0 0 3px var(--accent); }
 .effect-option:focus-visible { outline: none; }
-.effect-option:focus-visible .effect-thumb { box-shadow: 0 0 0 3px #fff, 0 0 0 6px #3b6fd8; }
+.effect-option:focus-visible .effect-thumb { box-shadow: 0 0 0 3px #3b6fd8; }

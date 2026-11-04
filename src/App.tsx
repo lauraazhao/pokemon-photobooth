@@ -272,7 +272,14 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
           >
             <div className="stage">
               <Card ref={cardRef} template={template} data={cardData} photoRef={photoRef} />
-              {countdown !== null && <div className="countdown">{countdown}</div>}
+              {countdown !== null && (
+                <div
+                  className="countdown"
+                  style={{ left: template.photo.x, top: template.photo.y, width: template.photo.w, height: template.photo.h }}
+                >
+                  {countdown}
+                </div>
+              )}
             </div>
           </div>
           {mode === 'live' && cameraMessage && (
@@ -283,7 +290,6 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
               {segmenterError ? 'Background removal is unavailable in this browser.' : 'Loading background removal…'}
             </p>
           )}
-          {mode === 'captured' && <EffectBar base={photoBase} value={effect} onChange={setEffect} version={shot} />}
           <div className={mode === 'live' ? 'actions camera-dock' : 'actions'}>
             {mode === 'live' ? (
               <button className="capture-button" onClick={takePhoto} disabled={status !== 'live' || countdown !== null}>
@@ -313,7 +319,9 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
         </section>
         {mode === 'captured' && (
           <div className="side-panels">
-            <CardTextEditor data={cardData} onChange={setCardData} />
+            <CardTextEditor data={cardData} onChange={setCardData}>
+              <EffectBar base={photoBase} value={effect} onChange={setEffect} version={shot} />
+            </CardTextEditor>
           </div>
         )}
         {mode === 'final' && (
