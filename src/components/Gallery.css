@@ -1,0 +1,60 @@
+.gallery {
+  width: 100%;
+  margin-top: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  scroll-margin-top: 24px;
+}
+.gallery-title { margin: 0; font-size: 1.6rem; }
+.gallery-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 28px 20px;
+}
+.gallery-item { display: flex; flex-direction: column; gap: 10px; }
+.gallery-photo {
+  display: block;
+  border-radius: 12px;
+  transition: transform 0.2s ease;
+}
+.gallery-photo:hover, .gallery-photo:focus-visible { transform: translateY(-4px) rotate(-1deg); }
+.gallery-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.45));
+}
+.gallery-caption { display: flex; flex-direction: column; gap: 2px; padding: 0 4px; }
+.gallery-caption p { margin: 0; }
+.gallery-name { font-size: 1rem; }
+/* Notes are written by visitors, so keep them in the plain, easy-to-read font. */
+.gallery-note { font-family: var(--font-plain); font-size: 0.9rem; line-height: 1.35; overflow-wrap: anywhere; }
+.gallery-date { font-size: 0.8rem; color: var(--text-muted); }
+
+/* A hint under the pack that there's more below. */
+.gallery-hint {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+.gallery-hint:hover, .gallery-hint:focus-visible { color: var(--text); }
+.gallery-hint-arrow { font-size: 1.2rem; animation: hint-bob 1.8s ease-in-out infinite; }
+@keyframes hint-bob { 50% { transform: translateY(4px); } }
+@media (prefers-reduced-motion: reduce) {
+  .gallery-hint-arrow { animation: none; }
+  .gallery-photo { transition: none; }
+}
+@media (max-width: 480px) {
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 20px 12px; }
+}

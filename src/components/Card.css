@@ -1,0 +1,54 @@
+/* Card text styles from Figma. Positions come from src/lib/cards.ts. */
+/* Pin the card body text to the regular Gill Sans face (by its PostScript names),
+   so browsers can't pick a heavier face of the family. Falls back to Lato. */
+@font-face {
+  font-family: 'Card Body';
+  src: local('GillSansMT'), local('Gill Sans MT'), local('GillSans'), local('Gill Sans');
+  font-weight: 400;
+  font-style: normal;
+}
+
+.card {
+  --font-title: 'Comico', 'Lato', sans-serif;
+  --font-body: 'Card Body', 'Lato', sans-serif;
+  position: relative;
+  flex: none;
+  font-family: var(--font-body);
+  text-shadow: none;
+}
+.card-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  user-select: none;
+}
+.card-photo { position: absolute; display: block; }
+
+.card-text {
+  position: absolute;
+  margin: 0;
+  overflow: hidden;
+}
+.font-title {
+  font-family: var(--font-title);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 25px;
+  white-space: nowrap;
+  /* Comico only has capitals; this keeps the fallback font looking the same. */
+  text-transform: uppercase;
+}
+.card-name, .card-attack-text { text-align: left; }
+.card-attack-name { text-align: center; }
+.card-attack-text {
+  font-size: 11px;
+  font-weight: 400;
+  /* Mac's default subpixel smoothing makes small text look bold. */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: normal;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}

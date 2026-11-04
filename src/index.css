@@ -1,44 +1,153 @@
+/* Comico: the site's display font. Uses the installed font if there is one,
+   otherwise the self-hosted public/fonts/Comico-Regular.woff2. */
+@font-face {
+  font-family: 'Comico';
+  src: local('Comico'), local('Comico Regular'), local('Comico-Regular'), url('/fonts/Comico-Regular.woff2') format('woff2');
+  font-display: swap;
+}
+
 :root {
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  color: #1d1d1f;
-  background: #f4f1ea;
+  --font-site: 'Comico', 'Lato', system-ui, sans-serif;
+  --font-plain: 'Lato', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --text: #f6f4ff;
+  --text-muted: #c8cdf2;
   --accent: #e3350d;
+  font-family: var(--font-site);
+  color: var(--text);
+  background: #070b24;
 }
 * { box-sizing: border-box; }
-body { margin: 0; min-height: 100vh; }
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+/* Dithered starfield, darkened a touch at the top and bottom so text stays readable.
+   On a fixed layer of its own so it can stay pixel-crisp without affecting the cards. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(4, 6, 24, 0.45), rgba(4, 6, 24, 0.1) 30%, rgba(4, 6, 24, 0.1) 70%, rgba(4, 6, 24, 0.5)),
+    url('./assets/site/space-bg.png') center / cover no-repeat;
+  image-rendering: pixelated;
+}
+/* Site copy sits on a busy background: a soft shadow keeps it crisp. */
+main { text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75), 0 0 12px rgba(0, 0, 0, 0.45); }
 main {
-  max-width: 720px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 24px 16px;
+  /* Extra room on top so the content sits nearer the middle of the screen;
+     extra at the bottom so the corner link never covers anything. */
+  padding: clamp(40px, 10vh, 120px) 16px 64px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 16px;
 }
+h1, h2 { font-weight: 400; }
 h1 { margin: 0; font-size: 1.75rem; }
-.camera, .result { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.viewport {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  background: #222;
-  border-radius: 12px;
+.logo { line-height: 0; }
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
   overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
-video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-.result img { width: 100%; border-radius: 12px; }
-.notice {
-  position: absolute; inset: 0; margin: 0; padding: 24px;
-  display: grid; place-items: center; text-align: center; color: #fff;
-}
+.logo img { display: block; width: min(420px, 85vw); height: auto; }
+.stage { position: relative; }
 .countdown {
   position: absolute; inset: 0; display: grid; place-items: center;
   font-size: 6rem; font-weight: 700; color: #fff; text-shadow: 0 2px 12px rgba(0,0,0,.5);
+  pointer-events: none;
 }
+.notice { margin: 0; text-align: center; color: var(--text-muted); }
 .actions { display: flex; gap: 12px; }
 button, .button {
-  font: inherit; font-weight: 600; padding: 12px 24px; border-radius: 999px;
+  font: inherit; font-weight: 400; letter-spacing: 0.03em; text-shadow: none; padding: 12px 24px; border-radius: 999px;
   border: 2px solid #1d1d1f; background: #fff; color: #1d1d1f; cursor: pointer; text-decoration: none;
 }
 .primary { background: var(--accent); border-color: var(--accent); color: #fff; }
 button:disabled { opacity: .5; cursor: not-allowed; }
+
+.workspace {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 24px;
+}
+.booth { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.panel {
+  flex: 1 1 280px;
+  max-width: 360px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #1d1d1f;
+  text-shadow: none;
+  border: 0;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+.panel h2 { margin: 0 0 4px; font-size: 1.15rem; font-weight: 400; }
+.panel-hint { margin: 0 0 16px; color: #666; font-size: 0.9rem; }
+.editor fieldset { margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 12px; }
+@media (max-width: 720px) { .panel { max-width: 330px; } }
+.editor-field { display: flex; flex-direction: column; gap: 4px; }
+.editor-field label { display: flex; justify-content: space-between; font-weight: 400; font-size: 0.9rem; }
+.editor-count { font-weight: 400; color: #777; }
+.editor input, .editor textarea {
+  /* What people type stays in a plain font so it's easy to read and edit. */
+  font: inherit; font-family: var(--font-plain); padding: 8px 12px; border: 2px solid #1d1d1f; border-radius: 10px; background: #fff; resize: vertical;
+}
+.editor input:focus, .editor textarea:focus { outline: 3px solid rgba(227, 53, 13, 0.35); outline-offset: 1px; }
+
+.fade-in { animation: fade-in 0.6s ease-out both; }
+@keyframes fade-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .fade-in { animation: none; } }
+
+/* Link to Laura's site, pinned to the bottom-right corner. */
+.site-credit {
+  position: fixed;
+  right: 16px;
+  bottom: 14px;
+  z-index: 2;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  transition: color 0.2s ease;
+}
+.site-credit:hover, .site-credit:focus-visible { color: var(--text); text-decoration: underline; }
+
+.side-panels { flex: 1 1 280px; max-width: 360px; display: flex; flex-direction: column; gap: 20px; }
+.side-panels .panel { flex: none; max-width: none; }
+@media (max-width: 720px) { .side-panels { max-width: 330px; } }
+.form-error { margin: 0; color: #b3261e; font-family: var(--font-plain); font-size: 0.9rem; }
+/* On phones the pinned link would cover the gallery, so it sits at the end of the page instead. */
+@media (max-width: 600px) {
+  .site-credit { position: static; display: block; width: fit-content; margin: 0 auto 20px; }
+}
+
+/* Sound on/off, pinned to the top-right corner. */
+.sound-toggle {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(10, 14, 40, 0.55);
+  color: var(--text);
+  backdrop-filter: blur(4px);
+}
+.sound-toggle:hover, .sound-toggle:focus-visible { background: rgba(30, 36, 80, 0.8); }
