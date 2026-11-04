@@ -1,19 +1,17 @@
 import { useState } from 'react'
 import Card from './Card'
-import { CARDS, pickRandomCards, type CardTemplate } from '../lib/cards'
+import { pullCards, type CardTemplate } from '../lib/cards'
 import './CardPicker.css'
 
 interface Props {
   onPick: (card: CardTemplate) => void
-  /** How many cards to offer. */
-  count?: number
 }
 
 const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-/** Shows a few random cards from the pack; clicking one picks it for the photo. */
-export default function CardPicker({ onPick, count = 3 }: Props) {
-  const [choices] = useState(() => pickRandomCards(Math.min(count, CARDS.length)))
+/** Deals the cards pulled from the pack (2 basic + 1 rare); clicking one picks it for the photo. */
+export default function CardPicker({ onPick }: Props) {
+  const [choices] = useState(pullCards)
   const [picked, setPicked] = useState<string | null>(null)
 
   const pick = (card: CardTemplate) => {
@@ -43,7 +41,10 @@ export default function CardPicker({ onPick, count = 3 }: Props) {
                 <Card template={card} />
               </span>
             </button>
-            <span className="picker-card-name">{card.name}</span>
+            <span className="picker-card-name">
+              {card.name}
+              {card.rarity !== 'basic' && <span className={`picker-rarity is-${card.rarity}`}>{card.rarity}</span>}
+            </span>
           </li>
         ))}
       </ul>

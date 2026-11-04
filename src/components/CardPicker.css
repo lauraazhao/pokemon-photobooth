@@ -84,3 +84,16 @@
   .picker-card { transition: none; }
   .picker-card:hover:not(:disabled), .picker-card:focus-visible { transform: none; }
 }
+
+.picker-rarity {
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: #6b5fd3;
+}
+.picker-rarity.is-epic { background: linear-gradient(90deg, #d79a1c, #f4cf4a); color: #3a2600; }

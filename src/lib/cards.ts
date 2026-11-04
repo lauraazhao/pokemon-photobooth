@@ -22,9 +22,12 @@ export interface Box {
   h: number
 }
 
+export type Rarity = 'basic' | 'rare' | 'epic'
+
 export interface CardTemplate {
   id: string
   name: string
+  rarity: Rarity
   art: string
   width: number
   height: number
@@ -48,6 +51,7 @@ function basicCard(id: string, name: string, art: string): CardTemplate {
   return {
     id,
     name,
+    rarity: 'basic',
     art,
     width: 330,
     height: 460,
@@ -60,11 +64,17 @@ function basicCard(id: string, name: string, art: string): CardTemplate {
   }
 }
 
-function exCard(id: string, name: string, art: string, opts: { up?: boolean; color?: string } = {}): CardTemplate {
+function exCard(
+  id: string,
+  name: string,
+  art: string,
+  opts: { up?: boolean; color?: string; rarity?: Rarity } = {},
+): CardTemplate {
   const dy = opts.up ? -1 : 0
   return {
     id,
     name,
+    rarity: opts.rarity ?? 'rare',
     art,
     width: 330,
     height: 459,
@@ -87,18 +97,33 @@ export const CARDS: CardTemplate[] = [
   basicCard('basic-magenta', 'Magenta', basicMagenta),
   basicCard('basic-midnight', 'Midnight', basicMidnight),
   exCard('fire-ex', 'Fire ex', fireEx),
-  exCard('gold-ex', 'Gold ex', goldEx),
+  exCard('gold-ex', 'Gold ex', goldEx, { rarity: 'epic' }),
   exCard('dark-ex', 'Dark ex', darkEx, { up: true, color: '#fff' }),
   exCard('fairy-ex', 'Fairy ex', fairyEx, { up: true }),
   exCard('sky-ex', 'Sky ex', skyEx, { up: true }),
 ]
 
-/** Picks `n` different cards at random. */
-export function pickRandomCards(n: number, from: CardTemplate[] = CARDS): CardTemplate[] {
-  const pool = [...from]
+/** Chance that the rare slot in a pull is the epic card instead. */
+export const EPIC_CHANCE = 0.1
+
+function shuffle<T>(items: T[]): T[] {
+  const pool = [...items]
   for (let i = pool.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1))
     ;[pool[i], pool[j]] = [pool[j], pool[i]]
   }
-  return pool.slice(0, n)
+  return pool
+}
+
+const ofRarity = (r: Rarity) => CARDS.filter((c) => c.rarity === r)
+
+/**
+ * A pack pull: two different basic cards, then one rare card last.
+ * The rare slot has a 1 in 10 chance of being the epic card.
+ */
+export function pullCards(): CardTemplate[] {
+  const basics = shuffle(ofRarity('basic')).slice(0, 2)
+  const epics = ofRarity('epic')
+  const pool = epics.length && Math.random() < EPIC_CHANCE ? epics : ofRarity('rare')
+  return [...basics, shuffle(pool)[0]]
 }
