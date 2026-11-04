@@ -12,6 +12,8 @@ import { cutOutPerson, loadSegmenter } from './lib/segmenter'
 import { renderPerson } from './lib/photoArea'
 import logoUrl from './assets/brand/photomon-logo.png'
 import Meteors from './components/Meteors'
+import SoundToggle from './components/SoundToggle'
+import { playShutter, playTick } from './lib/sfx'
 import Gallery from './components/Gallery'
 import GallerySubmit from './components/GallerySubmit'
 import GalleryAdmin from './components/GalleryAdmin'
@@ -78,11 +80,16 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
   const takePhoto = useCallback(() => {
     let n = 3
     setCountdown(n)
+    playTick()
     const id = setInterval(() => {
       n -= 1
-      if (n > 0) return setCountdown(n)
+      if (n > 0) {
+        playTick()
+        return setCountdown(n)
+      }
       clearInterval(id)
       setCountdown(null)
+      playShutter()
       // Without the model, freeze the raw frame instead of a cutout.
       const video = videoRef.current
       if (!segmenter && video) {
@@ -176,6 +183,7 @@ function Photobooth() {
   return (
     <>
       <Meteors />
+      <SoundToggle />
       <main>
         {/* The pack already shows the logo, so the header only appears after it's opened. */}
         {step === 'pack' ? (

@@ -1,4 +1,5 @@
 import { useRef, useState, type CSSProperties, type PointerEvent } from 'react'
+import { playRip, playWhoosh, startTear, unlockAudio } from '../lib/sfx'
 import packUrl from '../assets/pack/card-pack.png'
 import './PackIntro.css'
 
@@ -59,17 +60,30 @@ export default function PackIntro({ onOpened }: Props) {
   const [progress, setProgress] = useState(0)
   const [dir, setDir] = useState<1 | -1>(1)
   const drag = useRef<{ id: number; startX: number; width: number } | null>(null)
+  const tear = useRef<ReturnType<typeof startTear> | null>(null)
+  const tearIdle = useRef(0)
+
+  const stopTear = () => {
+    window.clearTimeout(tearIdle.current)
+    tear.current?.stop()
+    tear.current = null
+  }
 
   const finish = (direction: 1 | -1) => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     drag.current = null
+    stopTear()
+    playRip()
     setDir(direction)
     setProgress(1)
     setPhase('ripped')
     // Timings match the animations in PackIntro.css: the strip flies off,
     // three cards shoot up out of the pack too fast to see, then the pack fades.
     if (reduced) return setTimeout(onOpened, 0)
-    setTimeout(() => setPhase('pulling'), 300)
+    setTimeout(() => {
+      setPhase('pulling')
+      playWhoosh()
+    }, 300)
     setTimeout(() => setPhase('fading'), 800)
     setTimeout(onOpened, 1150)
   }
@@ -79,6 +93,8 @@ export default function PackIntro({ onOpened }: Props) {
     e.currentTarget.setPointerCapture(e.pointerId)
     drag.current = { id: e.pointerId, startX: e.clientX, width: e.currentTarget.getBoundingClientRect().width }
     setPhase('dragging')
+    unlockAudio()
+    tear.current = startTear()
   }
 
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
@@ -88,6 +104,10 @@ export default function PackIntro({ onOpened }: Props) {
     const p = Math.min(1, Math.abs(dx) / (d.width * RIP_DISTANCE))
     const direction = dx >= 0 ? 1 : -1
     if (p >= 1) return finish(direction)
+    // The tearing sound follows how fast the finger moves, and goes quiet when it stops.
+    tear.current?.set(Math.abs(e.movementX) / 10)
+    window.clearTimeout(tearIdle.current)
+    tearIdle.current = window.setTimeout(() => tear.current?.set(0), 80)
     setDir(direction)
     setProgress(p)
   }
@@ -97,6 +117,7 @@ export default function PackIntro({ onOpened }: Props) {
     if (!d || d.id !== e.pointerId) return
     // Not far enough: the strip settles back into place.
     drag.current = null
+    stopTear()
     setProgress(0)
     setPhase('idle')
   }
