@@ -151,7 +151,7 @@ export function startTear() {
   }, 18)
   return {
     set(amount: number) {
-      level.gain.setTargetAtTime(Math.max(0, Math.min(1, amount)) * 0.35, c.currentTime, 0.03)
+      level.gain.setTargetAtTime(Math.max(0, Math.min(1, amount)) * 0.5, c.currentTime, 0.03)
     },
     stop() {
       window.clearInterval(timer)
@@ -161,16 +161,23 @@ export function startTear() {
   }
 }
 
-/** The final rip as the top of the pack tears off. */
+/** The final rip as the top of the pack tears off: a fast run of tearing crackles, then the strip coming free. */
 export function playRip() {
   const c = audio()
   if (!c || !master) return
-  // A run of crackles that sweep up, then a papery release.
-  for (let i = 0; i < 9; i++) {
-    burst(c, master, { at: i * 0.022 + Math.random() * 0.01, dur: 0.05, gain: 0.35 + Math.random() * 0.3, from: 1500 + i * 280, q: 1.4 })
+  for (let i = 0; i < 18; i++) {
+    burst(c, master, {
+      at: i * 0.016 + Math.random() * 0.008,
+      dur: 0.035 + Math.random() * 0.03,
+      gain: 0.3 + Math.random() * 0.35,
+      from: 1400 + Math.random() * 3200,
+      q: 1.2,
+      attack: 0.001,
+    })
   }
-  burst(c, master, { at: 0.02, dur: 0.32, gain: 0.3, from: 1200, to: 5200, q: 0.7 })
-  tone(c, master, { freq: 120, glideTo: 60, decay: 0.15, gain: 0.25 })
+  burst(c, master, { dur: 0.32, gain: 0.32, from: 900, to: 4800, q: 0.6, attack: 0.01 })
+  burst(c, master, { at: 0.27, dur: 0.18, gain: 0.18, type: 'highpass', from: 3000, attack: 0.004 })
+  tone(c, master, { freq: 130, glideTo: 60, decay: 0.12, gain: 0.18 })
 }
 
 /** Cards shooting up out of the pack: three quick rising whooshes. */
@@ -192,8 +199,9 @@ export function playLand(at = 0) {
 }
 
 /**
- * The swirling void behind a hovered card: a low, breathing hum with a windy
- * swirl. The epic card's void shimmers instead. Returns a function that fades it out.
+ * Hovering a card: a soft, angelic choir-like chord that swells in gently,
+ * with a faint airy shimmer on top. The epic card's chord is brighter, with a
+ * few slow sparkles. Returns a function that fades it out.
  */
 export function startVoid(epic = false): () => void {
   const c = audio()
@@ -201,61 +209,63 @@ export function startVoid(epic = false): () => void {
   const t = c.currentTime
   const out = c.createGain()
   out.gain.setValueAtTime(0.0001, t)
-  out.gain.exponentialRampToValueAtTime(1, t + 0.35)
+  out.gain.exponentialRampToValueAtTime(1, t + 0.6)
+  // Rounds off the top so it sounds like voices rather than beeps.
+  const soften = c.createBiquadFilter()
+  soften.type = 'lowpass'
+  soften.frequency.value = 2400
+  soften.connect(out)
   out.connect(master)
   const stops: (() => void)[] = []
 
-  // Hum: two slightly detuned low tones that beat against each other.
-  const humGain = c.createGain()
-  humGain.gain.value = 0.07
-  humGain.connect(out)
-  for (const [f, type] of [
-    [epic ? 110 : 55, 'sine'],
-    [epic ? 110.8 : 55.6, 'triangle'],
-    [epic ? 165 : 82.5, 'sine'],
-  ] as const) {
-    const osc = c.createOscillator()
-    osc.type = type
-    osc.frequency.value = f
-    osc.connect(humGain)
-    osc.start()
-    stops.push(() => osc.stop(c.currentTime + 0.5))
-  }
-
-  // Swirl: noise through a filter whose pitch rises and falls like the spin.
-  const { src, offset } = noiseSource(c, true)
-  const swirl = c.createBiquadFilter()
-  swirl.type = 'bandpass'
-  swirl.Q.value = 6
-  swirl.frequency.value = epic ? 2200 : 700
-  const lfo = c.createOscillator()
-  lfo.frequency.value = epic ? 0.9 : 0.5
-  const lfoDepth = c.createGain()
-  lfoDepth.gain.value = epic ? 1200 : 400
-  lfo.connect(lfoDepth).connect(swirl.frequency)
-  const swirlGain = c.createGain()
-  swirlGain.gain.value = epic ? 0.05 : 0.08
-  src.connect(swirl).connect(swirlGain).connect(out)
-  src.start(0, offset)
-  lfo.start()
-  stops.push(() => {
-    src.stop(c.currentTime + 0.5)
-    lfo.stop(c.currentTime + 0.5)
+  // "Aah" chord: each note is two slightly detuned voices with a slow vibrato.
+  const chord = epic ? [523.3, 659.3, 784, 1046.5] : [440, 554.4, 659.3, 880]
+  const vibrato = c.createOscillator()
+  vibrato.frequency.value = 4.5
+  const vibratoDepth = c.createGain()
+  vibratoDepth.gain.value = 3
+  vibrato.connect(vibratoDepth)
+  vibrato.start()
+  stops.push(() => vibrato.stop(c.currentTime + 0.6))
+  chord.forEach((freq, i) => {
+    for (const detune of [-6, 6]) {
+      const osc = c.createOscillator()
+      osc.type = i === 0 ? 'triangle' : 'sine'
+      osc.frequency.value = freq
+      osc.detune.value = detune
+      vibratoDepth.connect(osc.frequency)
+      const g = c.createGain()
+      g.gain.value = 0.012 / (1 + i * 0.3)
+      osc.connect(g).connect(soften)
+      osc.start()
+      stops.push(() => osc.stop(c.currentTime + 0.6))
+    }
   })
 
-  // Epic: a sparkle of high bell tones while it's open.
+  // Breath of air on top.
+  const { src, offset } = noiseSource(c, true)
+  const air = c.createBiquadFilter()
+  air.type = 'bandpass'
+  air.frequency.value = epic ? 6000 : 5000
+  air.Q.value = 1.2
+  const airGain = c.createGain()
+  airGain.gain.value = 0.006
+  src.connect(air).connect(airGain).connect(out)
+  src.start(0, offset)
+  stops.push(() => src.stop(c.currentTime + 0.6))
+
   let sparkle = 0
   if (epic) {
-    const notes = [1568, 1760, 2093, 2349, 2637]
+    const notes = [2093, 2349, 2637, 3136]
     sparkle = window.setInterval(() => {
-      tone(c, out, { freq: notes[Math.floor(Math.random() * notes.length)], decay: 0.5, gain: 0.03 })
-    }, 260)
+      tone(c, out, { freq: notes[Math.floor(Math.random() * notes.length)], decay: 0.7, gain: 0.008 })
+    }, 420)
   }
 
   return () => {
     window.clearInterval(sparkle)
     out.gain.cancelScheduledValues(c.currentTime)
-    out.gain.setTargetAtTime(0.0001, c.currentTime, 0.08)
+    out.gain.setTargetAtTime(0.0001, c.currentTime, 0.12)
     stops.forEach((s) => s())
   }
 }

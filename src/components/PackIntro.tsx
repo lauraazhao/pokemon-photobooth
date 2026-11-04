@@ -59,7 +59,7 @@ export default function PackIntro({ onOpened }: Props) {
   const [phase, setPhase] = useState<Phase>('idle')
   const [progress, setProgress] = useState(0)
   const [dir, setDir] = useState<1 | -1>(1)
-  const drag = useRef<{ id: number; startX: number; width: number } | null>(null)
+  const drag = useRef<{ id: number; startX: number; lastX: number; width: number } | null>(null)
   const tear = useRef<ReturnType<typeof startTear> | null>(null)
   const tearIdle = useRef(0)
 
@@ -91,7 +91,7 @@ export default function PackIntro({ onOpened }: Props) {
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
     if (phase !== 'idle') return
     e.currentTarget.setPointerCapture(e.pointerId)
-    drag.current = { id: e.pointerId, startX: e.clientX, width: e.currentTarget.getBoundingClientRect().width }
+    drag.current = { id: e.pointerId, startX: e.clientX, lastX: e.clientX, width: e.currentTarget.getBoundingClientRect().width }
     setPhase('dragging')
     unlockAudio()
     tear.current = startTear()
@@ -105,7 +105,9 @@ export default function PackIntro({ onOpened }: Props) {
     const direction = dx >= 0 ? 1 : -1
     if (p >= 1) return finish(direction)
     // The tearing sound follows how fast the finger moves, and goes quiet when it stops.
-    tear.current?.set(Math.abs(e.movementX) / 10)
+    // (Measured from clientX: touch screens don't report movementX.)
+    tear.current?.set(Math.abs(e.clientX - d.lastX) / 8)
+    d.lastX = e.clientX
     window.clearTimeout(tearIdle.current)
     tearIdle.current = window.setTimeout(() => tear.current?.set(0), 80)
     setDir(direction)
