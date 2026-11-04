@@ -193,7 +193,9 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
             <Card ref={cardRef} template={template} data={cardData} photoRef={photoRef} />
             {countdown !== null && <div className="countdown">{countdown}</div>}
           </div>
-          {mode === 'live' && cameraMessage && <p className="notice">{cameraMessage}</p>}
+          {mode === 'live' && cameraMessage && (
+            <p className={status === 'starting' ? 'notice notice-display' : 'notice'}>{cameraMessage}</p>
+          )}
           {mode === 'live' && status === 'live' && !segmenter && (
             <p className="notice">
               {segmenterError ? 'Background removal is unavailable in this browser.' : 'Loading background removal…'}
@@ -203,9 +205,8 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
             {mode === 'live' ? (
               <button className="capture-button" onClick={takePhoto} disabled={status !== 'live' || countdown !== null}>
                 <span className="capture-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
-                    <path d="M3 8.5A1.5 1.5 0 0 1 4.5 7h2.6l1.6-2.2A1.5 1.5 0 0 1 9.9 4.2h4.2a1.5 1.5 0 0 1 1.2.6L16.9 7h2.6A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z" />
-                    <circle cx="12" cy="12.8" r="3.6" />
+                  <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" fillRule="evenodd">
+                    <path d="M9.9 3.5a2 2 0 0 0-1.6.8L6.9 6.2H4.5A2.5 2.5 0 0 0 2 8.7v9.3A2.5 2.5 0 0 0 4.5 20.5h15a2.5 2.5 0 0 0 2.5-2.5V8.7a2.5 2.5 0 0 0-2.5-2.5h-2.4l-1.4-1.9a2 2 0 0 0-1.6-.8zM12 9.2a4.2 4.2 0 1 0 0 8.4 4.2 4.2 0 0 0 0-8.4zm0 2a2.2 2.2 0 1 1 0 4.4 2.2 2.2 0 0 1 0-4.4z" />
                   </svg>
                 </span>
                 Start countdown

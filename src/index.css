@@ -67,6 +67,7 @@ h1 { margin: 0; font-size: 1.75rem; }
   pointer-events: none;
 }
 .notice { margin: 0; text-align: center; color: var(--text-muted); font-family: var(--font-sub); font-size: 1.05rem; }
+.notice-display { font-family: var(--font-site); }
 .actions { display: flex; gap: 12px; }
 button, .button {
   font: inherit; font-weight: 400; letter-spacing: 0.03em; text-shadow: none; padding: 12px 24px; border-radius: 999px;
@@ -112,7 +113,7 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .editor-count { font-weight: 400; color: #888; font-family: var(--font-sub); }
 .editor input, .editor textarea {
   /* What people type stays in a plain font so it's easy to read and edit. */
-  font: inherit; font-family: var(--font-plain); padding: 10px 12px; border: 1px solid rgba(0, 0, 0, 0.14); border-radius: 10px; background: #fff; resize: vertical;
+  font: inherit; font-family: var(--font-plain); font-size: 1rem; padding: 10px 12px; border: 1px solid rgba(0, 0, 0, 0.14); border-radius: 10px; background: #fff; resize: vertical;
 }
 .editor input:focus, .editor textarea:focus { outline: 2px solid rgba(227, 53, 13, 0.3); outline-offset: 1px; border-color: transparent; }
 
@@ -183,7 +184,7 @@ button:disabled { opacity: .5; cursor: not-allowed; }
   border-radius: 50%;
   background: var(--accent);
   color: #fff;
-  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.9), 0 8px 20px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .capture-button:hover:not(:disabled) .capture-icon { transform: scale(1.06); }
