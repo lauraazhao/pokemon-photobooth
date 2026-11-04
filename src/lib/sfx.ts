@@ -40,7 +40,8 @@ function audio(): AudioContext | null {
     master.gain.value = muted ? 0 : 1
     master.connect(ctx.destination)
   }
-  if (ctx.state === 'suspended') void ctx.resume()
+  // 'interrupted' is iOS's paused state (after a call, or coming back to the tab).
+  if (ctx.state !== 'running' && ctx.state !== 'closed') void ctx.resume()
   return ctx
 }
 
@@ -123,6 +124,27 @@ function burst(
 /** Call from the first pointer or key event so later sounds aren't blocked. */
 export function unlockAudio() {
   audio()
+}
+
+/*
+ * Browsers only let sound start after a tap, click or key press, and on phones the start of a
+ * touch (pointerdown) doesn't count: only lifting the finger does. So the very first swipe on
+ * the pack can't start the sound by itself. Until sound is allowed, every gesture anywhere
+ * tries again (also after iOS pauses audio, say after a call); sounds asked for in the meantime are queued on the paused audio clock and play
+ * as soon as it starts (for the first swipe, that's when the finger lifts).
+ */
+const UNLOCK_EVENTS = ['pointerdown', 'pointerup', 'touchstart', 'touchend', 'mousedown', 'keydown', 'click'] as const
+function unlockOnGesture() {
+  const c = audio()
+  if (!c || c.state === 'running') return
+  // A silent blip started inside the gesture: older iPhones need a sound played here to unlock.
+  const blip = c.createBufferSource()
+  blip.buffer = c.createBuffer(1, 1, c.sampleRate)
+  blip.connect(c.destination)
+  blip.start()
+}
+if (typeof window !== 'undefined') {
+  for (const type of UNLOCK_EVENTS) window.addEventListener(type, unlockOnGesture, { capture: true, passive: true })
 }
 
 /**
