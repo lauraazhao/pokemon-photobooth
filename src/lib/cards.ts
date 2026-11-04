@@ -47,7 +47,7 @@ export interface CardTemplate {
   defaults: { name: string; attackName: string; attackText: string }
 }
 
-const DESCRIPTION = 'If your opponent’s Active Pokemon is Burned, this attack does 160 more damage.'
+const DESCRIPTION = 'If your opponent’s Active Photomon is ugly, this attack does 140 more damage.'
 
 // All the designs share one layout. "basic" cards have one type icon and
 // HP starting at x 233; "ex" cards have two icons and HP starting at x 218.
@@ -65,7 +65,7 @@ function basicCard(id: string, name: string, art: string): CardTemplate {
     title: { x: 29, y: 33, w: 196, h: 25 },
     ability: { x: 67, y: 291, w: 192, h: 25 },
     description: { x: 39, y: 320, w: 252, h: 78 },
-    defaults: { name: 'Mega Camerupt', attackName: 'Energize', attackText: DESCRIPTION },
+    defaults: { name: 'Mega Photomon', attackName: 'Energize', attackText: DESCRIPTION },
   }
 }
 
@@ -89,7 +89,7 @@ function exCard(
     title: { x: 29, y: 33 + dy, w: 181, h: 25 },
     ability: { x: 89, y: 291 + dy, w: 170, h: 25 },
     description: { x: 39, y: 320 + dy, w: 252, h: 78 },
-    defaults: { name: 'Mega Camerupt', attackName: 'Volcanic Meteor', attackText: DESCRIPTION },
+    defaults: { name: 'Mega Photomon', attackName: 'Volcanic Meteor', attackText: DESCRIPTION },
   }
 }
 
