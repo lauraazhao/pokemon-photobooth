@@ -12,13 +12,16 @@ import { cutOutPerson, loadSegmenter } from './lib/segmenter'
 import { renderPerson } from './lib/photoArea'
 import logoUrl from './assets/brand/photomon-logo.png'
 import Meteors from './components/Meteors'
+import Gallery from './components/Gallery'
+import GallerySubmit from './components/GallerySubmit'
+import GalleryAdmin from './components/GalleryAdmin'
 
 /** Render scale for the photo. Also used for the downloaded PNG. */
 const SCALE = Math.max(2, Math.ceil(window.devicePixelRatio || 1))
 
 type Mode = 'live' | 'captured'
 
-function Booth({ template }: { template: CardTemplate }) {
+function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGallery: () => void }) {
   const { videoRef, status } = useCamera()
   const cardRef = useRef<HTMLDivElement>(null)
   const photoRef = useRef<HTMLCanvasElement>(null)
@@ -144,7 +147,12 @@ function Booth({ template }: { template: CardTemplate }) {
             )}
           </div>
         </section>
-        {mode === 'captured' && <CardTextEditor data={cardData} onChange={setCardData} />}
+        {mode === 'captured' && (
+          <div className="side-panels">
+            <CardTextEditor data={cardData} onChange={setCardData} />
+            <GallerySubmit cardRef={cardRef} onViewGallery={onViewGallery} />
+          </div>
+        )}
       </div>
     </>
   )
@@ -152,13 +160,19 @@ function Booth({ template }: { template: CardTemplate }) {
 
 type Step = 'pack' | 'pick' | 'booth'
 
-export default function App() {
+function Photobooth() {
   const [step, setStep] = useState<Step>('pack')
   const [card, setCard] = useState<CardTemplate | null>(null)
+  // Set after sharing a card: back on the start screen, jump to the (freshly loaded) gallery.
+  const [showGallery, setShowGallery] = useState(false)
   useEffect(() => {
     // Start downloading the cutout model while the pack is on screen.
     loadSegmenter().catch(() => {})
   }, [])
+  const viewGallery = () => {
+    setShowGallery(true)
+    setStep('pack')
+  }
   return (
     <>
       <Meteors />
@@ -171,7 +185,18 @@ export default function App() {
             <img src={logoUrl} alt="Photomon!" width={420} height={102} />
           </h1>
         )}
-        {step === 'pack' && <PackIntro onOpened={() => setStep('pick')} />}
+        {step === 'pack' && (
+          <>
+            <PackIntro onOpened={() => setStep('pick')} />
+            <a className="gallery-hint" href="#gallery">
+              See the gallery
+              <span className="gallery-hint-arrow" aria-hidden="true">
+                ↓
+              </span>
+            </a>
+            <Gallery fresh={showGallery} />
+          </>
+        )}
         {step === 'pick' && (
           <CardPicker
             onPick={(c) => {
@@ -180,11 +205,22 @@ export default function App() {
             }}
           />
         )}
-        {step === 'booth' && card && <Booth template={card} />}
+        {step === 'booth' && card && <Booth template={card} onViewGallery={viewGallery} />}
       </main>
       <a className="site-credit" href="https://laurazhao.com/" target="_blank" rel="noopener">
         laurazhao.com
       </a>
     </>
   )
+}
+
+/** The photobooth, or the gallery admin page at /#admin. */
+export default function App() {
+  const [hash, setHash] = useState(() => window.location.hash)
+  useEffect(() => {
+    const onHash = () => setHash(window.location.hash)
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
+  return hash === '#admin' ? <GalleryAdmin /> : <Photobooth />
 }

@@ -123,3 +123,12 @@ button:disabled { opacity: .5; cursor: not-allowed; }
   transition: color 0.2s ease;
 }
 .site-credit:hover, .site-credit:focus-visible { color: var(--text); text-decoration: underline; }
+
+.side-panels { flex: 1 1 280px; max-width: 360px; display: flex; flex-direction: column; gap: 20px; }
+.side-panels .panel { flex: none; max-width: none; }
+@media (max-width: 720px) { .side-panels { max-width: 330px; } }
+.form-error { margin: 0; color: #b3261e; font-family: var(--font-plain); font-size: 0.9rem; }
+/* On phones the pinned link would cover the gallery, so it sits at the end of the page instead. */
+@media (max-width: 600px) {
+  .site-credit { position: static; display: block; width: fit-content; margin: 0 auto 20px; }
+}

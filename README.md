@@ -35,3 +35,12 @@ Fonts: see `public/fonts/README.md`.
 6. Background picker + upload
 7. Download polish + mobile layout
 8. Deploy (Vercel / Netlify)
+
+## Gallery setup (Vercel)
+
+People can share their finished card to a public gallery on the start screen. It's stored in Vercel Blob:
+
+1. In the Vercel project, open **Storage → Create → Blob**, choose **public** access, and connect it to this project. That adds `BLOB_READ_WRITE_TOKEN` automatically.
+2. Add an environment variable `GALLERY_ADMIN_KEY` with a long password of your choice. Use it at `/#admin` to delete photos.
+3. Optional: set `GALLERY_REQUIRE_APPROVAL=true` to hold new photos until you approve them on `/#admin`.
+4. Redeploy.
