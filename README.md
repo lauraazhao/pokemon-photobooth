@@ -31,7 +31,7 @@ Fonts: see `public/fonts/README.md`.
 2. ✅ Card from Figma ("basic water") with live person cutout on the card background, dithered like the Figma shader
 3. ✅ Side panel to edit the name, attack name and description after the photo (long text shrinks to fit)
 4. ✅ Opening screen: a sealed card pack from Figma; swipe across the seam under the hole punch to rip it open (the strip peels as you drag), then the pack fades out and the card fades in
-5. ✅ Pick 1 of 3 cards after opening the pack: 2 random basics + 1 rare (1 in 10 chance the rare is the epic gold ex)
+5. ✅ Pick 1 of 3 cards after opening the pack: 2 random basics + 1 rare in random order (1 in 10 chance the rare is the epic gold ex)
 6. Background picker + upload
 7. Download polish + mobile layout
 8. Deploy (Vercel / Netlify)

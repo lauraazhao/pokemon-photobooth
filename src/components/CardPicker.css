@@ -48,17 +48,19 @@
   transform: scale(var(--s));
   transform-origin: top left;
 }
+.picker-cards li:has(.picker-card:hover:not(:disabled)),
+.picker-cards li:has(.picker-card:focus-visible) { z-index: 1; }
 .picker-card:hover:not(:disabled),
 .picker-card:focus-visible {
-  transform: translateY(-10px) rotate(-1.5deg);
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
+  transform: translateY(-14px) rotate(-2deg) scale(1.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
 }
 .picker-card:focus-visible { outline: 3px solid #3b6fd8; outline-offset: 4px; }
 .picker-card:disabled { cursor: default; }
 
 .has-pick .picker-card.is-picked {
-  transform: translateY(-14px) scale(1.04);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  transform: translateY(-14px) scale(1.12);
+  box-shadow: 0 24px 44px rgba(0, 0, 0, 0.3);
 }
 .has-pick .picker-card:not(.is-picked) { opacity: 0; filter: blur(2px); transform: scale(0.94); }
 
@@ -68,8 +70,8 @@
   z-index: -1;
   left: 50%;
   top: calc(230px * var(--s) - 10px); /* centered on the lifted card */
-  width: calc(330px * var(--s) + 170px);
-  height: calc(460px * var(--s) + 130px);
+  width: calc(330px * var(--s) + 200px);
+  height: calc(460px * var(--s) + 160px);
   translate: -50% -50%;
   border-radius: 50%;
   pointer-events: none;
