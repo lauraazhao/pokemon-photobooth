@@ -160,9 +160,14 @@ export default function App() {
   }, [])
   return (
     <main>
-      <h1 className="logo">
-        <img src={logoUrl} alt="Photomon!" width={280} height={68} />
-      </h1>
+      {/* The pack already shows the logo, so the header only appears after it's opened. */}
+      {step === 'pack' ? (
+        <h1 className="visually-hidden">Photomon!</h1>
+      ) : (
+        <h1 className="logo fade-in">
+          <img src={logoUrl} alt="Photomon!" width={280} height={68} />
+        </h1>
+      )}
       {step === 'pack' && <PackIntro onOpened={() => setStep('pick')} />}
       {step === 'pick' && (
         <CardPicker

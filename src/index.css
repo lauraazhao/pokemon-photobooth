@@ -17,6 +17,14 @@ main {
 }
 h1 { margin: 0; font-size: 1.75rem; }
 .logo { line-height: 0; }
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .logo img { display: block; width: min(280px, 70vw); height: auto; }
 .stage { position: relative; }
 .countdown {

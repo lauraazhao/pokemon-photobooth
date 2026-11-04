@@ -53,22 +53,20 @@
 }
 .pack-hint-finger {
   position: absolute;
-  top: -14px;
+  transform-origin: 16px 2px;
+  /* Fingertip sits on the seam line. */
+  top: -2px;
   left: 0;
-  width: 28px;
-  height: 28px;
-  margin-left: -14px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
-  border: 3px solid #e3350d;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  margin-left: -16px;
+  overflow: visible;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
   animation: pack-swipe 1.8s ease-in-out infinite;
 }
 @keyframes pack-swipe {
-  0% { left: 0%; opacity: 0; transform: scale(0.8); }
-  15% { opacity: 1; transform: scale(1); }
-  75% { left: 100%; opacity: 1; transform: scale(1); }
-  100% { left: 100%; opacity: 0; transform: scale(0.8); }
+  0% { left: 0%; opacity: 0; transform: translateY(6px) rotate(-8deg); }
+  15% { opacity: 1; transform: translateY(0) rotate(-8deg); }
+  75% { left: 100%; opacity: 1; transform: translateY(0) rotate(8deg); }
+  100% { left: 100%; opacity: 0; transform: translateY(6px) rotate(8deg); }
 }
 .pack-dragging .pack-hint, .pack-ripped .pack-hint, .pack-pulling .pack-hint, .pack-fading .pack-hint { opacity: 0; }
 

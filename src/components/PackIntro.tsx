@@ -31,6 +31,20 @@ const pt = ([x, y]: [number, number]) => `${x.toFixed(2)}% ${y.toFixed(2)}%`
 const TOP_CLIP = `polygon(0% 0%, 100% 0%, ${[...TEAR].reverse().map(pt).join(', ')})`
 const BODY_CLIP = `polygon(${TEAR.map(pt).join(', ')}, 100% 100%, 0% 100%)`
 
+/** The parts of the pointing-hand icon; the index fingertip is at (11.5, 1). */
+function HandShapes() {
+  return (
+    <>
+      <rect x="9" y="1" width="5" height="17" rx="2.5" />
+      <rect x="13.4" y="10" width="4.6" height="9" rx="2.3" />
+      <rect x="17.4" y="11.4" width="4.3" height="8.4" rx="2.15" />
+      <rect x="21" y="13.2" width="3.7" height="7.4" rx="1.85" />
+      <rect x="8" y="15" width="16.6" height="14" rx="5" />
+      <rect x="3.2" y="14" width="4.2" height="10" rx="2.1" transform="rotate(-32 5.3 19)" />
+    </>
+  )
+}
+
 interface Props {
   /** Called once the pack has ripped and faded out. */
   onOpened: () => void
@@ -132,7 +146,15 @@ export default function PackIntro({ onOpened }: Props) {
         <div className="pack-layer pack-top" style={topStyle} />
         <div className="pack-hint" aria-hidden="true">
           <div className="pack-hint-line" />
-          <div className="pack-hint-finger" />
+          <svg className="pack-hint-finger" viewBox="0 0 26 32" width="36" height="44">
+            {/* Pointing hand: shapes drawn once as an outline, then filled on top so they merge. */}
+            <g fill="#1d1d1f" stroke="#1d1d1f" strokeWidth="2.6" strokeLinejoin="round">
+              <HandShapes />
+            </g>
+            <g fill="#fff">
+              <HandShapes />
+            </g>
+          </svg>
         </div>
       </div>
     </div>
