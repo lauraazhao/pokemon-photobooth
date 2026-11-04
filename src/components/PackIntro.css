@@ -2,7 +2,6 @@
 
 .pack-prompt { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; text-align: center; }
 .pack-prompt strong { font-size: 1.35rem; font-weight: 400; letter-spacing: 0.02em; }
-.pack-prompt span { color: var(--text-muted); font-family: var(--font-sub); font-size: 1.05rem; }
 .pack-ripped .pack-prompt, .pack-pulling .pack-prompt, .pack-fading .pack-prompt { opacity: 0; transition: opacity 0.3s; }
 
 .pack {

@@ -139,7 +139,6 @@ export default function PackIntro({ onOpened }: Props) {
     <div className={`pack-intro pack-${phase}`}>
       <p className="pack-prompt">
         <strong>Rip open the pack to start</strong>
-        <span>Swipe across the top of the pack</span>
       </p>
       <div
         className="pack"
