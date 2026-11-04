@@ -1,0 +1,86 @@
+.picker {
+  --s: 0.72; /* card scale */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+.picker-title { margin: 0; font-size: 1.4rem; }
+.picker-hint { margin: 0 0 12px; color: #666; }
+
+.picker-cards {
+  list-style: none;
+  margin: 0;
+  padding: 8px 16px 16px;
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  max-width: 100%;
+}
+.picker-cards li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  animation: deal 0.5s cubic-bezier(0.2, 0.8, 0.3, 1.2) both;
+}
+@keyframes deal {
+  from { opacity: 0; transform: translateY(40px) rotate(-4deg) scale(0.9); }
+  to { opacity: 1; transform: none; }
+}
+
+.picker-card {
+  /* Reserve the scaled card's size so the layout matches what you see. */
+  width: calc(330px * var(--s));
+  height: calc(460px * var(--s));
+  padding: 0;
+  border: none;
+  background: none;
+  border-radius: calc(16px * var(--s));
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.35s ease, filter 0.35s ease;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+.picker-card-scale {
+  display: block;
+  transform: scale(var(--s));
+  transform-origin: top left;
+}
+.picker-card:hover:not(:disabled),
+.picker-card:focus-visible {
+  transform: translateY(-10px) rotate(-1.5deg);
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
+}
+.picker-card:focus-visible { outline: 3px solid #3b6fd8; outline-offset: 4px; }
+.picker-card:disabled { cursor: default; }
+
+.has-pick .picker-card.is-picked {
+  transform: translateY(-14px) scale(1.04);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+.has-pick .picker-card:not(.is-picked) { opacity: 0; filter: blur(2px); transform: scale(0.94); }
+.has-pick .picker-card-name { opacity: 0; transition: opacity 0.3s; }
+
+.picker-card-name { font-size: 0.9rem; color: #555; }
+
+/* Phones: swipe through the cards sideways. */
+@media (max-width: 760px) {
+  .picker { --s: 0.62; }
+  .picker-cards {
+    justify-content: flex-start;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    width: 100%;
+    gap: 16px;
+  }
+  .picker-cards li { scroll-snap-align: center; }
+  .picker-cards li:first-child { margin-left: auto; }
+  .picker-cards li:last-child { margin-right: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .picker-cards li { animation: none; }
+  .picker-card { transition: none; }
+  .picker-card:hover:not(:disabled), .picker-card:focus-visible { transform: none; }
+}

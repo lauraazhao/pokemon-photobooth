@@ -16,9 +16,11 @@ Open the printed localhost URL. The camera only works on `localhost` or over HTT
 ## How the card photo works
 
 - `src/lib/segmenter.ts`: MediaPipe selfie segmentation cuts the person out of each camera frame, in the browser.
-- `src/lib/photoArea.ts`: draws the "photobooth picture" layer: water background at 75%, blue-to-white overlay at 50%, and the metallic 4px frame, then the person on top.
-- `src/lib/dither.ts`: a port of the Figma Dither shader (Bayer 16×16, 2 levels), applied to the background and frame only, so the person stays sharp. Set `DITHER = false` in `App.tsx` to turn it off.
-- `src/components/Card.tsx`: the rest of the card, built from the Figma frame. Download uses `html-to-image`.
+- `src/assets/cards/`: one PNG per card design, exported from the Figma "cards" section (node 854:17916) with the three "editable …" layers hidden (set them to 0% opacity rather than hiding, so auto-layout doesn't shift). Export at 2x.
+- `src/lib/cards.ts`: the list of card designs and where the photo and editable text sit on each. To add a card, export its art and add one line here.
+- `src/lib/photoArea.ts`: draws the person (sharp, not dithered) onto the card's "photobooth picture" area.
+- `src/components/Card.tsx`: card art + person + editable text. Download uses `html-to-image`.
+- `src/components/CardPicker.tsx`: after the pack is ripped open, deals 3 random designs to choose from.
 
 Fonts: see `public/fonts/README.md`.
 
@@ -28,6 +30,7 @@ Fonts: see `public/fonts/README.md`.
 2. ✅ Card from Figma ("basic water") with live person cutout on the card background, dithered like the Figma shader
 3. ✅ Side panel to edit the name, attack name and description after the photo (long text shrinks to fit)
 4. ✅ Opening screen: a sealed card pack from Figma; swipe across the seam under the hole punch to rip it open (the strip peels as you drag), then the pack fades out and the card fades in
-5. Background picker + upload
-6. Download polish + mobile layout
-7. Deploy (Vercel / Netlify)
+5. ✅ Pick 1 of 3 random cards (13 designs from Figma) after opening the pack
+6. Background picker + upload
+7. Download polish + mobile layout
+8. Deploy (Vercel / Netlify)

@@ -4,37 +4,32 @@ import type { ImageSegmenter } from '@mediapipe/tasks-vision'
 import Card from './components/Card'
 import CardTextEditor from './components/CardTextEditor'
 import PackIntro from './components/PackIntro'
-import { DEFAULT_CARD } from './lib/cardData'
+import CardPicker from './components/CardPicker'
+import { cardDataFor } from './lib/cardData'
+import type { CardTemplate } from './lib/cards'
 import { useCamera } from './lib/useCamera'
 import { cutOutPerson, loadSegmenter } from './lib/segmenter'
-import { renderPhotoArea } from './lib/photoArea'
-import photoBgUrl from './assets/card/photo-bg.jpg'
+import { renderPerson } from './lib/photoArea'
 
-/** Render scale for the dithered photo. Also used for the downloaded PNG. */
+/** Render scale for the photo. Also used for the downloaded PNG. */
 const SCALE = Math.max(2, Math.ceil(window.devicePixelRatio || 1))
-/** Set to false to turn off the Figma dither effect on the photo background. */
-const DITHER = true
 
 type Mode = 'live' | 'captured'
 
-function Booth() {
+function Booth({ template }: { template: CardTemplate }) {
   const { videoRef, status } = useCamera()
   const cardRef = useRef<HTMLDivElement>(null)
   const photoRef = useRef<HTMLCanvasElement>(null)
   const cutoutRef = useRef<HTMLCanvasElement>(document.createElement('canvas'))
   const maskRef = useRef<HTMLCanvasElement>(document.createElement('canvas'))
-  const [background, setBackground] = useState<HTMLImageElement | null>(null)
   const [segmenter, setSegmenter] = useState<ImageSegmenter | null>(null)
   const [segmenterError, setSegmenterError] = useState(false)
   const [mode, setMode] = useState<Mode>('live')
   const [countdown, setCountdown] = useState<number | null>(null)
   const [saving, setSaving] = useState(false)
-  const [cardData, setCardData] = useState(DEFAULT_CARD)
+  const [cardData, setCardData] = useState(() => cardDataFor(template))
 
   useEffect(() => {
-    const img = new Image()
-    img.onload = () => setBackground(img)
-    img.src = photoBgUrl
     loadSegmenter().then(setSegmenter, (e) => {
       console.error('Could not load person cutout model', e)
       setSegmenterError(true)
@@ -46,7 +41,7 @@ function Booth() {
     const canvas = photoRef.current
     if (!canvas) return
     const draw = (person: HTMLCanvasElement | HTMLVideoElement | null) =>
-      renderPhotoArea(canvas, { background, person, mirror: true, scale: SCALE, dither: DITHER })
+      renderPerson(canvas, { width: template.photo.w, height: template.photo.h, person, mirror: true, scale: SCALE })
 
     if (mode === 'captured') {
       draw(cutoutRef.current)
@@ -73,7 +68,7 @@ function Booth() {
     }
     tick()
     return () => cancelAnimationFrame(raf)
-  }, [mode, status, segmenter, background, videoRef])
+  }, [mode, status, segmenter, template, videoRef])
 
   const takePhoto = useCallback(() => {
     let n = 3
@@ -123,7 +118,7 @@ function Booth() {
       <div className="workspace fade-in">
         <section className="booth">
           <div className="stage">
-            <Card ref={cardRef} data={cardData} photoRef={photoRef} />
+            <Card ref={cardRef} template={template} data={cardData} photoRef={photoRef} />
             {countdown !== null && <div className="countdown">{countdown}</div>}
           </div>
           {mode === 'live' && cameraMessage && <p className="notice">{cameraMessage}</p>}
@@ -153,8 +148,11 @@ function Booth() {
   )
 }
 
+type Step = 'pack' | 'pick' | 'booth'
+
 export default function App() {
-  const [opened, setOpened] = useState(false)
+  const [step, setStep] = useState<Step>('pack')
+  const [card, setCard] = useState<CardTemplate | null>(null)
   useEffect(() => {
     // Start downloading the cutout model while the pack is on screen.
     loadSegmenter().catch(() => {})
@@ -162,7 +160,16 @@ export default function App() {
   return (
     <main>
       <h1>Card Photobooth</h1>
-      {opened ? <Booth /> : <PackIntro onOpened={() => setOpened(true)} />}
+      {step === 'pack' && <PackIntro onOpened={() => setStep('pick')} />}
+      {step === 'pick' && (
+        <CardPicker
+          onPick={(c) => {
+            setCard(c)
+            setStep('booth')
+          }}
+        />
+      )}
+      {step === 'booth' && card && <Booth template={card} />}
     </main>
   )
 }

@@ -1,4 +1,4 @@
-/* Card layout and styles taken from the Figma frame "basic water". */
+/* Card text styles from Figma. Positions come from src/lib/cards.ts. */
 @font-face {
   font-family: 'Comico';
   src: local('Comico'), local('Comico Regular'), url('/fonts/Comico-Regular.woff2') format('woff2');
@@ -9,154 +9,38 @@
   --font-title: 'Comico', 'Lato', sans-serif;
   --font-body: 'Gill Sans MT', 'Gill Sans', 'Lato', sans-serif;
   position: relative;
-  width: 330px;
-  height: 460px;
   flex: none;
-  color: #000;
   font-family: var(--font-body);
 }
-.card p { margin: 0; }
-
-.card-border {
+.card-art {
   position: absolute;
   inset: 0;
-  display: flex;
-  overflow: hidden;
-  background: #fff;
-  border: 13px solid #edd05c;
-  border-radius: 16px;
+  width: 100%;
+  height: 100%;
+  display: block;
+  user-select: none;
 }
+.card-photo { position: absolute; display: block; }
 
-.card-bg {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.card-text {
+  position: absolute;
+  margin: 0;
   overflow: hidden;
-  padding: 12px 16px;
-  isolation: isolate; /* keeps the ::before outlines above this background */
-  background-image: linear-gradient(90deg, rgb(141, 205, 219) 0%, rgb(92, 156, 217) 28.004%, rgb(102, 136, 199) 60.03%);
-}
-
-.card-stats { display: flex; flex-direction: column; gap: 12px; }
-
-.card-header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 8px;
-  padding-top: 8px;
 }
 .font-title {
   font-family: var(--font-title);
   font-size: 16px;
   font-weight: 400;
-  line-height: normal;
+  line-height: 25px;
   white-space: nowrap;
   /* Comico only has capitals; this keeps the fallback font looking the same. */
   text-transform: uppercase;
 }
-.card-name { flex: 1; min-width: 0; overflow: hidden; }
-.card-attack-name { flex: 0 1 auto; min-width: 0; overflow: hidden; text-align: center; }
-.card-hp { flex: none; display: flex; align-items: flex-end; gap: 4px; font-weight: 700; white-space: nowrap; }
-.card-hp-number { display: flex; align-items: flex-end; }
-.card-hp-label { font-size: 10px; line-height: normal; }
-.card-hp-value {
-  font-size: 26px;
+.card-name, .card-attack-text { text-align: left; }
+.card-attack-name { text-align: center; }
+.card-attack-text {
+  font-size: 11px;
   line-height: normal;
-  text-box-trim: trim-both;
-  text-box-edge: cap alphabetic;
-}
-.card-type-icon { width: 18px; height: 18px; display: block; }
-
-.card-photo { position: relative; flex: none; }
-.card-photo canvas { position: absolute; display: block; }
-
-.card-divider {
-  position: relative;
-  flex: none;
-  height: 8px;
-  border-radius: 8px;
-  background: linear-gradient(to bottom, #666 -22.5%, #000 125%);
-}
-.card-divider::before {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  z-index: -1;
-  border-radius: 11px;
-  background: linear-gradient(to right, #333 -2%, #666 102%);
-}
-
-.card-description {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  height: 117px;
-  flex: none;
-  overflow: hidden;
-  padding: 20px 10px 10px;
-}
-.card-power { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.card-power-icon, .card-damage { flex: none; }
-.card-power-icon {
-  width: 20px;
-  height: 20px;
-  border-radius: 30px;
-  overflow: hidden;
-  background: #e3492e;
-}
-.card-power-icon img { width: 20px; height: 20px; display: block; }
-.card-damage { font-weight: 700; font-size: 14px; white-space: nowrap; }
-.card-attack-text { flex: 1; min-height: 0; overflow: hidden; font-size: 11px; line-height: normal; overflow-wrap: anywhere; white-space: pre-line; }
-
-.card-weakness {
-  position: relative;
-  flex: none;
-  height: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 4px 10px;
-  border-radius: 16px 4px 16px 4px;
-  background: linear-gradient(to bottom, #fff -22.5%, #999 125%);
-  font-size: 10px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-.card-weakness::before {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  z-index: -1;
-  border-radius: 17px 5px 17px 5px;
-  background: linear-gradient(to right, #333 -2%, #666 102%);
-  opacity: 0.5;
-}
-.card-weakness-value { display: flex; align-items: center; gap: 2px; }
-.card-weakness-value img { width: 9px; height: 9px; display: block; }
-
-.card-footer {
-  padding: 6px 10px;
-  font-size: 10px;
-  text-align: right;
-}
-
-.card-stage {
-  position: absolute;
-  left: 11px;
-  top: 11px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  padding: 2.017px 18.655px;
-  border: 1px solid rgba(51, 51, 51, 0.71);
-  border-radius: 10.07px 4.034px 16.07px 4.034px;
-  background: linear-gradient(to bottom, #ededed 18.518%, #cfcfcf 33.832%, #696969 96.154%);
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.4);
-  color: #333;
-  font-size: 9px;
-  font-weight: 700;
-  font-style: italic;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
 }
