@@ -53,51 +53,40 @@
   white-space: pre-line;
 }
 
-/* Holographic shimmer on rare cards: a rainbow sheen that drifts endlessly, plus a bright glint
-   that sweeps across now and then. Both loop without a visible jump: the rainbow tile repeats
-   (it starts and ends on the same color), and the glint resets while it's off the card. */
+/* Holographic shimmer on rare cards: a rainbow sheen with a bright glint that sweeps across the card.
+   Seamless loop: the rainbow repeats every 660px (it starts and ends on the same color) and each cycle
+   moves it exactly one repeat, and the glint resets while it's off the card. */
 .card-holo {
   position: absolute;
   inset: 0;
-  overflow: hidden;
   pointer-events: none;
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
-  background: linear-gradient(110deg,
-    rgba(255, 90, 170, 0.9) 0%,
-    rgba(255, 220, 90, 0.9) 20%,
-    rgba(90, 255, 170, 0.9) 40%,
-    rgba(90, 180, 255, 0.9) 60%,
-    rgba(200, 110, 255, 0.9) 80%,
-    rgba(255, 90, 170, 0.9) 100%);
-  background-size: 600px 100%;
-  background-repeat: repeat-x;
+  background:
+    linear-gradient(110deg,
+      transparent 38%,
+      rgba(255, 255, 255, 0.85) 47%,
+      rgba(255, 255, 255, 0.85) 50%,
+      transparent 59%),
+    linear-gradient(110deg,
+      rgba(255, 90, 170, 0.9) 0%,
+      rgba(255, 220, 90, 0.9) 20%,
+      rgba(90, 255, 170, 0.9) 40%,
+      rgba(90, 180, 255, 0.9) 60%,
+      rgba(200, 110, 255, 0.9) 80%,
+      rgba(255, 90, 170, 0.9) 100%);
+  background-size: 250% 100%, 660px 100%;
+  background-repeat: no-repeat, repeat-x;
   mix-blend-mode: overlay;
   opacity: 0.55;
-  animation: holo-drift 8s linear infinite;
+  animation: holo-sweep 8s ease-in-out infinite;
 }
-.card-holo::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 60%;
-  background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.9) 42%, rgba(255, 255, 255, 0.9) 58%, transparent 100%);
-  transform: translateX(-120%);
-  animation: holo-glint 4s ease-in-out infinite;
+.card-holo.is-epic { opacity: 0.7; animation-duration: 6.4s; }
+/* Two sweeps per cycle, each moving the rainbow half a repeat, so the end matches the start. */
+@keyframes holo-sweep {
+  0% { background-position: 130% 0, 0 0; }
+  30%, 50% { background-position: -30% 0, 330px 0; }
+  50.01% { background-position: 130% 0, 330px 0; }
+  80%, 100% { background-position: -30% 0, 660px 0; }
 }
-.card-holo.is-epic { opacity: 0.7; }
-.card-holo.is-epic::before { animation-duration: 3.2s; }
-@keyframes holo-drift {
-  from { background-position: 0 0; }
-  to { background-position: 600px 0; }
-}
-@keyframes holo-glint {
-  0% { transform: translateX(-120%); }
-  60%, 100% { transform: translateX(290%); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .card-holo { animation-duration: 24s; }
-  .card-holo::before { animation-duration: 12s; }
-}
+@media (prefers-reduced-motion: reduce) { .card-holo { animation-duration: 24s; } }
