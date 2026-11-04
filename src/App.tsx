@@ -68,14 +68,16 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
   const [saving, setSaving] = useState(false)
   const [cardData, setCardData] = useState(() => cardDataFor(template))
   const [effect, setEffect] = useState<EffectId>('none')
-  // How big the card is while posing: as big as fits above the camera button (up to 1.6×).
+  // How big the card is while posing: its top half as big as fits above the camera button (up to 1.6×).
   const viewRef = useRef<HTMLDivElement>(null)
   const [zoom, setZoom] = useState(1)
   useLayoutEffect(() => {
+    // The part of the card shown in full while posing: down to just below the photo.
+    const focusH = template.photo.y + template.photo.h + 16
     const fit = () => {
       const top = viewRef.current ? viewRef.current.getBoundingClientRect().top + window.scrollY : 200
       // Leave room for the camera button and its label below the card.
-      const byHeight = (window.innerHeight - top - 175) / template.height
+      const byHeight = (window.innerHeight - top - 175) / focusH
       const byWidth = (window.innerWidth - 16) / template.width
       // On short phone screens the card shrinks a little so the button stays on screen.
       setZoom(Math.max(0.75, Math.min(1.6, byHeight, byWidth)))
@@ -255,7 +257,7 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
     <>
       <div className="workspace fade-in">
         <section className="booth">
-          {/* While posing, the whole card is shown as big as fits, so people can see themselves. */}
+          {/* While posing, the card is enlarged; its lower half sits under the black band with the camera button. */}
           <div
             ref={viewRef}
             className={mode === 'live' ? 'stage-view zoomed' : 'stage-view'}
@@ -263,6 +265,7 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
               {
                 '--card-w': `${template.width}px`,
                 '--card-h': `${template.height}px`,
+                '--focus-h': `${template.photo.y + template.photo.h + 16}px`,
                 '--zoom': zoom,
               } as CSSProperties
             }

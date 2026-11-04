@@ -64,7 +64,8 @@ h1 { margin: 0; font-size: 1.75rem; }
 }
 .logo img { display: block; width: min(420px, 85vw); height: auto; }
 .stage { position: relative; flex: none; transform-origin: top center; transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
-/* Holds the card. While posing, the whole card is enlarged (by --zoom, set to fit the screen). */
+/* Holds the card. While posing, the card is enlarged (by --zoom, set to fit the screen) and only its top
+   half takes up room: the rest carries on under the black band below. */
 .stage-view {
   display: flex;
   justify-content: center;
@@ -72,21 +73,21 @@ h1 { margin: 0; font-size: 1.75rem; }
   height: var(--card-h);
   transition: width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-.stage-view.zoomed { width: calc(var(--card-w) * var(--zoom)); height: calc(var(--card-h) * var(--zoom)); }
+.stage-view.zoomed { width: calc(var(--card-w) * var(--zoom)); height: calc(var(--focus-h) * var(--zoom)); }
 .stage-view.zoomed .stage { transform: scale(var(--zoom)); }
 @media (prefers-reduced-motion: reduce) { .stage, .stage-view { transition: none; } }
-/* While posing, everything from the camera button down sits on solid black. */
-.camera-dock { position: relative; isolation: isolate; padding: 8px 0 24px; }
+/* While posing, everything from the camera button down sits on black, over the lower half of the card. */
+.camera-dock { position: relative; z-index: 1; isolation: isolate; padding: 8px 0 24px; }
 .camera-dock::before {
   content: '';
   position: absolute;
   z-index: -1;
-  top: -32px;
+  top: -16px;
   left: 50%;
   width: 100vw;
   height: 300vh;
   transform: translateX(-50%);
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9) 32px);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9) 24px);
   pointer-events: none;
 }
 .countdown {
