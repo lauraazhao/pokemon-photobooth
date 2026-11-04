@@ -1,5 +1,5 @@
 /* Comico: the site's display font. Uses the installed font if there is one,
-   otherwise public/fonts/Comico-Regular.woff2 when that file is added. */
+   otherwise the self-hosted public/fonts/Comico-Regular.woff2. */
 @font-face {
   font-family: 'Comico';
   src: local('Comico'), local('Comico Regular'), local('Comico-Regular'), url('/fonts/Comico-Regular.woff2') format('woff2');
@@ -20,11 +20,18 @@
 body {
   margin: 0;
   min-height: 100vh;
-  /* Starfield, darkened a touch at the top and bottom so text stays readable. */
+}
+/* Dithered starfield, darkened a touch at the top and bottom so text stays readable.
+   On a fixed layer of its own so it can stay pixel-crisp without affecting the cards. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
   background:
     linear-gradient(180deg, rgba(4, 6, 24, 0.45), rgba(4, 6, 24, 0.1) 30%, rgba(4, 6, 24, 0.1) 70%, rgba(4, 6, 24, 0.5)),
-    url('./assets/site/space-bg.jpg') center / cover fixed no-repeat,
-    #070b24;
+    url('./assets/site/space-bg.png') center / cover no-repeat;
+  image-rendering: pixelated;
 }
 /* Site copy sits on a busy background: a soft shadow keeps it crisp. */
 main { text-shadow: 0 1px 3px rgba(0, 0, 0, 0.75), 0 0 12px rgba(0, 0, 0, 0.45); }

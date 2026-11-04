@@ -3,8 +3,8 @@
 The card design uses two fonts that are not bundled here:
 
 - **Comico** (all site text, plus card titles and attack names). Free from Fontshare: https://www.fontshare.com/fonts/comico
-  Download it and save the regular weight as `public/fonts/Comico-Regular.woff2`.
-  Until then the app falls back to Lato Black in uppercase.
+  `public/fonts/Comico-Regular.woff2` is self-hosted for this site under the Fontshare Free License
+  (self-hosting for your own site is allowed; don't reuse the file elsewhere).
 - **Gill Sans MT** (numbers and body text). A commercial Monotype font, so it can't be
   shipped with the site. Macs have "Gill Sans" built in and use it automatically;
   everyone else sees Lato.
