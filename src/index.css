@@ -182,6 +182,8 @@ button:disabled { opacity: .5; cursor: not-allowed; }
 .side-panels { flex: 1 1 280px; max-width: 360px; display: flex; flex-direction: column; gap: 20px; }
 .side-panels .panel { flex: none; max-width: none; }
 @media (max-width: 720px) { .side-panels { max-width: 330px; } }
+.form-note { margin: 0; color: #666; font-family: var(--font-sub); font-size: 0.85rem; }
+.form-note a { color: inherit; }
 .form-error { margin: 0; color: #b3261e; font-family: var(--font-sub); font-size: 0.95rem; }
 /* On phones the pinned link would cover the gallery, so it sits at the end of the page instead. */
 @media (max-width: 600px) {

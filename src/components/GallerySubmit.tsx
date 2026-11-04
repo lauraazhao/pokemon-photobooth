@@ -96,6 +96,13 @@ export default function GallerySubmit({ cardRef, onViewGallery }: Props) {
               {state.message}
             </p>
           )}
+          <p className="form-note">
+            Please{' '}
+            <a href="https://laurazhao.com/" target="_blank" rel="noopener">
+              contact me
+            </a>{' '}
+            if you want your photo removed.
+          </p>
           <button type="submit" className="primary" disabled={!name.trim()}>
             {state.kind === 'sending' ? 'Posting…' : 'Post to gallery'}
           </button>
