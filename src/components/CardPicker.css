@@ -18,6 +18,8 @@
   max-width: 100%;
 }
 .picker-cards li {
+  position: relative;
+  isolation: isolate; /* keeps each void behind its own card */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -60,6 +62,75 @@
 }
 .has-pick .picker-card:not(.is-picked) { opacity: 0; filter: blur(2px); transform: scale(0.94); }
 
+/* The void: a swirling portal that opens behind the card you hover. */
+.picker-void {
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: calc(230px * var(--s) - 10px); /* centered on the lifted card */
+  width: calc(330px * var(--s) + 170px);
+  height: calc(460px * var(--s) + 130px);
+  translate: -50% -50%;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  scale: 0.6;
+  transition: opacity 0.35s ease, scale 0.5s cubic-bezier(0.2, 0.9, 0.3, 1.25);
+}
+.picker-void > span {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  animation-play-state: paused;
+}
+.picker-void-swirl {
+  background: conic-gradient(
+    from 0deg,
+    #12041f, #5a24c4, #0a0214, #c14dff, #1b0838, #3d7bff, #0d0322, #8a2be2, #12041f
+  );
+  -webkit-mask: radial-gradient(closest-side, #000 60%, transparent 100%);
+  mask: radial-gradient(closest-side, #000 60%, transparent 100%);
+  filter: blur(6px) saturate(1.4);
+  animation: void-spin 5s linear infinite;
+}
+.picker-void-streaks {
+  background: repeating-conic-gradient(from 10deg, rgba(255, 255, 255, 0.5) 0deg 1.2deg, transparent 1.2deg 11deg);
+  -webkit-mask: radial-gradient(closest-side, transparent 22%, #000 55%, transparent 95%);
+  mask: radial-gradient(closest-side, transparent 22%, #000 55%, transparent 95%);
+  filter: blur(1.5px);
+  mix-blend-mode: screen;
+  animation: void-spin 9s linear infinite reverse;
+}
+.picker-void-core {
+  inset: 18%;
+  background: radial-gradient(closest-side, #000 30%, rgba(20, 0, 40, 0.85) 60%, transparent 100%);
+  animation: void-breathe 2.4s ease-in-out infinite;
+}
+@keyframes void-spin { to { rotate: 360deg; } }
+@keyframes void-breathe {
+  0%, 100% { scale: 0.92; opacity: 0.9; }
+  50% { scale: 1.08; opacity: 1; }
+}
+.picker-cards li:has(.picker-card:hover:not(:disabled)) .picker-void,
+.picker-cards li:has(.picker-card:focus-visible) .picker-void,
+.picker-void.is-picked {
+  opacity: 1;
+  scale: 1;
+}
+.picker-cards li:has(.picker-card:hover:not(:disabled)) .picker-void > span,
+.picker-cards li:has(.picker-card:focus-visible) .picker-void > span,
+.picker-void.is-picked > span {
+  animation-play-state: running;
+}
+/* The chosen card's void collapses as the camera opens. */
+.has-pick .picker-void.is-picked {
+  animation: void-close 0.65s ease-in forwards;
+}
+@keyframes void-close {
+  0% { scale: 1; opacity: 1; }
+  40% { scale: 1.12; opacity: 1; }
+  100% { scale: 0.2; opacity: 0; }
+}
 
 /* Phones: swipe through the cards sideways. */
 @media (max-width: 760px) {
@@ -70,6 +141,7 @@
     scroll-snap-type: x mandatory;
     width: 100%;
     gap: 16px;
+    padding-block: 40px; /* room for the void inside the scroll area */
   }
   .picker-cards li { scroll-snap-align: center; }
   .picker-cards li:first-child { margin-left: auto; }
@@ -80,5 +152,6 @@
   .picker-cards li { animation: none; }
   .picker-card { transition: none; }
   .picker-card:hover:not(:disabled), .picker-card:focus-visible { transform: none; }
+  .picker-void, .picker-void > span { animation: none !important; transition: opacity 0.2s; scale: 1; }
 }
 
