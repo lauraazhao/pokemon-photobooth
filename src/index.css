@@ -147,6 +147,9 @@ button.primary:active:not(:disabled) {
 button.primary:active:not(:disabled) { box-shadow: inset 0 -2px 0 #a32406, inset 0 3px 0 rgba(255, 255, 255, 0.35), 0 0 0 var(--ink); }
 :is(.actions, .panel) button:focus-visible, button.primary:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
 button:disabled { opacity: .5; cursor: not-allowed; }
+/* A square game button holding just an icon (the home button). */
+.actions button.icon-button { display: grid; place-items: center; padding: 10px 14px 12px; }
+.icon-button svg { display: block; }
 
 /* The card stays centered; the side panels open in the column to its right
    without moving it. Narrow screens stack them under the card instead. */
