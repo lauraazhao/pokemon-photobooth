@@ -316,7 +316,11 @@ function Booth({ template, onViewGallery, onDone }: { template: CardTemplate; on
               </>
             ) : (
               <>
-                <button onClick={onDone}>Done</button>
+                <button className="icon-button" onClick={onDone} aria-label="Home" title="Home">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true">
+                    <path d="M11.3 2.7a1 1 0 0 1 1.4 0l9 8.6a1 1 0 0 1-.7 1.7H19v7.5a1.5 1.5 0 0 1-1.5 1.5H14v-6h-4v6H6.5A1.5 1.5 0 0 1 5 20.5V13H3a1 1 0 0 1-.7-1.7z" />
+                  </svg>
+                </button>
                 <button className="primary" onClick={download} disabled={saving}>
                   {saving ? 'Saving…' : canShare ? 'Save photo' : 'Download'}
                 </button>
