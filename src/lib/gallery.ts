@@ -6,6 +6,8 @@ export interface GalleryEntry {
   note: string
   date: string
   imageUrl: string
+  /** Which card design was used (missing on early posts). */
+  cardId?: string
 }
 
 export const GALLERY_LIMITS = { name: 40, note: 140 }
@@ -35,11 +37,12 @@ export async function cardImage(card: HTMLElement): Promise<Blob> {
   return jpeg
 }
 
-export async function submitToGallery(image: Blob, name: string, note: string): Promise<{ pending: boolean }> {
+export async function submitToGallery(image: Blob, name: string, note: string, cardId: string): Promise<{ pending: boolean }> {
   const form = new FormData()
   form.append('image', image, `card.${image.type.split('/')[1]}`)
   form.append('name', name)
   form.append('note', note)
+  form.append('card', cardId)
   const res = await fetch('/api/gallery', { method: 'POST', body: form })
   const body = (await res.json().catch(() => ({}))) as { error?: string; pending?: boolean }
   if (!res.ok) throw new Error(body.error ?? 'Something went wrong. Try again in a moment.')

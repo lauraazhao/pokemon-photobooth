@@ -57,8 +57,13 @@
 .gallery-caption p { margin: 0; }
 .gallery-name { font-size: 1rem; }
 /* Notes are written by visitors, so keep them in the plain, easy-to-read font. */
-.gallery-note { font-family: var(--font-plain); font-size: 0.9rem; line-height: 1.35; overflow-wrap: anywhere; }
+.gallery-note { margin-top: 4px !important; font-family: var(--font-plain); font-size: 0.9rem; line-height: 1.35; overflow-wrap: anywhere; }
 .gallery-date { font-family: var(--font-sub); font-size: 0.85rem; color: var(--text-muted); }
+/* Date on the left, the card's pull rate on the right. */
+.gallery-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.gallery-rarity { font-size: 0.75rem; letter-spacing: 0.03em; white-space: nowrap; color: var(--text-muted); }
+.gallery-rarity.is-rare { color: var(--trim); }
+.gallery-rarity.is-epic { color: var(--gold); }
 
 /* A hint under the pack that there's more below. */
 .start-hero {
@@ -125,6 +130,7 @@
 /* The enlarged card is a holo card (HoloCard.css); here it can also be dragged with a finger. */
 .lightbox .holo { touch-action: none; cursor: grab; }
 .lightbox-figure .gallery-caption { max-width: 420px; align-items: center; }
+.lightbox-figure .gallery-meta { flex-direction: column; align-items: center; gap: 2px; }
 .lightbox-close {
   position: absolute;
   top: 16px;

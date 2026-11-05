@@ -3,6 +3,8 @@ import { GALLERY_LIMITS, cardImage, submitToGallery } from '../lib/gallery'
 
 interface Props {
   cardRef: RefObject<HTMLDivElement | null>
+  /** The card design, so the gallery can show its rarity. */
+  cardId: string
   /** Go to the start screen's gallery. */
   onViewGallery: () => void
 }
@@ -10,7 +12,7 @@ interface Props {
 type State = { kind: 'idle' } | { kind: 'sending' } | { kind: 'done'; pending: boolean } | { kind: 'error'; message: string }
 
 /** Lets people share their finished card to the public gallery with their name and a note. */
-export default function GallerySubmit({ cardRef, onViewGallery }: Props) {
+export default function GallerySubmit({ cardRef, cardId, onViewGallery }: Props) {
   const [name, setName] = useState('')
   const [note, setNote] = useState('')
   const [website, setWebsite] = useState('') // honeypot, hidden from people
@@ -23,7 +25,7 @@ export default function GallerySubmit({ cardRef, onViewGallery }: Props) {
     try {
       const image = await cardImage(cardRef.current)
       if (website) throw new Error('Something went wrong. Try again in a moment.')
-      const { pending } = await submitToGallery(image, name, note)
+      const { pending } = await submitToGallery(image, name, note, cardId)
       setState({ kind: 'done', pending })
     } catch (err) {
       setState({ kind: 'error', message: err instanceof Error ? err.message : 'Something went wrong.' })

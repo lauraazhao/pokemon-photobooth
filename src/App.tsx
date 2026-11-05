@@ -333,7 +333,7 @@ function Booth({ template, onViewGallery, onDone }: { template: CardTemplate; on
         )}
         {mode === 'final' && (
           <div className="side-panels">
-            <GallerySubmit cardRef={cardRef} onViewGallery={onViewGallery} />
+            <GallerySubmit cardRef={cardRef} cardId={template.id} onViewGallery={onViewGallery} />
           </div>
         )}
       </div>

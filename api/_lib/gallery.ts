@@ -13,6 +13,8 @@ export interface Entry {
   /** ISO date-time the photo was submitted. */
   date: string
   imageUrl: string
+  /** Which card design was used (missing on early posts). */
+  cardId?: string
 }
 
 export const LIMITS = { name: 40, note: 140, imageBytes: 3_000_000 }
@@ -30,7 +32,7 @@ export function newId(): string {
   return `${Date.now()}-${rand}`
 }
 
-export async function saveEntry(image: Blob, name: string, note: string): Promise<{ entry: Entry; status: Status }> {
+export async function saveEntry(image: Blob, name: string, note: string, cardId?: string): Promise<{ entry: Entry; status: Status }> {
   const id = newId()
   const ext = image.type.split('/')[1]
   const photo = await put(`gallery/photos/${id}.${ext}`, image, {
@@ -38,7 +40,7 @@ export async function saveEntry(image: Blob, name: string, note: string): Promis
     contentType: image.type,
     addRandomSuffix: true, // keeps photo URLs unguessable
   })
-  const entry: Entry = { id, name, note, date: new Date().toISOString(), imageUrl: photo.url }
+  const entry: Entry = { id, name, note, date: new Date().toISOString(), imageUrl: photo.url, ...(cardId ? { cardId } : {}) }
   const status: Status = requiresApproval() ? 'pending' : 'approved'
   await put(entryPath(status, id), JSON.stringify(entry), {
     access: 'public',

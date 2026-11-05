@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { fetchGallery, formatDate, type GalleryEntry } from '../lib/gallery'
 import HoloCard from './HoloCard'
+import { CARDS, pullRate, type Rarity } from '../lib/cards'
 import './Gallery.css'
 
 /**
@@ -53,10 +54,8 @@ export default function Gallery({ fresh = false }: { fresh?: boolean }) {
               </button>
               <div className="gallery-caption">
                 <p className="gallery-name">{e.name}</p>
+                <GalleryMeta entry={e} />
                 {e.note && <p className="gallery-note">{e.note}</p>}
-                <time className="gallery-date" dateTime={e.date}>
-                  {formatDate(e.date)}
-                </time>
               </div>
             </li>
           ))}
@@ -88,10 +87,8 @@ function Lightbox({ entry, onClose }: { entry: GalleryEntry; onClose: () => void
         <HoloCard src={entry.imageUrl} alt={`Card by ${entry.name}`} />
         <figcaption className="gallery-caption">
           <p className="gallery-name">{entry.name}</p>
+          <GalleryMeta entry={entry} />
           {entry.note && <p className="gallery-note">{entry.note}</p>}
-          <time className="gallery-date" dateTime={entry.date}>
-            {formatDate(entry.date)}
-          </time>
         </figcaption>
       </figure>
       <button ref={closeRef} type="button" className="lightbox-close" onClick={onClose} aria-label="Close">
@@ -101,3 +98,37 @@ function Lightbox({ entry, onClose }: { entry: GalleryEntry; onClose: () => void
     document.body,
   )
 }
+
+/**
+ * Posts made before the card design was recorded, labelled by hand (by the name on the post).
+ * Only used for posts from before that change, so a new post with the same name isn't mistaken for one.
+ */
+const EARLY_POSTS: Record<string, Rarity> = { mike: 'epic', 'sleep paralysis': 'rare', loro: 'rare', lini: 'basic' }
+const EARLY_POSTS_BEFORE = '2026-11-05T02:00:00Z'
+
+function rarityOf(entry: GalleryEntry): Rarity | null {
+  if (entry.cardId) return CARDS.find((c) => c.id === entry.cardId)?.rarity ?? null
+  if (entry.date >= EARLY_POSTS_BEFORE) return null
+  return EARLY_POSTS[entry.name.trim().toLowerCase()] ?? null
+}
+
+/** The date on the left and, when known, how likely the card was to be pulled on the right. */
+function GalleryMeta({ entry }: { entry: GalleryEntry }) {
+  const rarity = rarityOf(entry)
+  const rate = rarity ? pullRate(rarity) : null
+  return (
+    <div className="gallery-meta">
+      <time className="gallery-date" dateTime={entry.date}>
+        {formatDate(entry.date)}
+      </time>
+      {rarity && rate !== null && (
+        <span className={`gallery-rarity is-${rarity}`} title={`Found in ${formatRate(rate)} of packs`}>
+          {rarity === 'basic' ? '' : '★ '}
+          {formatRate(rate)} pull rate
+        </span>
+      )}
+    </div>
+  )
+}
+
+const formatRate = (rate: number) => `${Number((rate * 100).toFixed(1))}%`
