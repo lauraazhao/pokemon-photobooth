@@ -1,4 +1,4 @@
-// GET: approved gallery entries. POST: submit a photo (multipart form: image, name, note).
+// GET: approved gallery entries. POST: submit a photo (multipart form: image, name, note, card).
 import { IMAGE_TYPES, LIMITS, cleanText, json, listEntries, requiresApproval, saveEntry } from './_lib/gallery.js'
 
 export async function GET() {
@@ -25,6 +25,10 @@ export async function POST(request: Request) {
   const note = cleanText(form.get('note'), LIMITS.note, false)
   if (note === null) return json({ error: `Keep the note under ${LIMITS.note} characters.` }, 400)
 
-  const { entry, status } = await saveEntry(image, name, note)
+  // The card design's id, for showing its rarity. Optional, and ignored if it doesn't look like one.
+  const card = form.get('card')
+  const cardId = typeof card === 'string' && /^[a-z0-9-]{1,40}$/.test(card) ? card : undefined
+
+  const { entry, status } = await saveEntry(image, name, note, cardId)
   return json({ ok: true, pending: status === 'pending' && requiresApproval(), entry }, 201)
 }

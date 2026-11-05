@@ -133,3 +133,13 @@ export function pullCards(): CardTemplate[] {
   const pool = epics.length && Math.random() < EPIC_CHANCE ? epics : ofRarity('rare')
   return shuffle([...basics, shuffle(pool)[0]])
 }
+
+/** How likely a pack is to contain this card (0 to 1), from how `pullCards` deals. */
+export function pullRate(id: string): number | null {
+  const card = CARDS.find((c) => c.id === id)
+  if (!card) return null
+  const count = ofRarity(card.rarity).length
+  if (card.rarity === 'basic') return Math.min(1, 2 / count)
+  const epicChance = ofRarity('epic').length ? EPIC_CHANCE : 0
+  return (card.rarity === 'epic' ? epicChance : 1 - epicChance) / count
+}

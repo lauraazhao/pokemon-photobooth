@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { fetchGallery, formatDate, type GalleryEntry } from '../lib/gallery'
 import HoloCard from './HoloCard'
+import { CARDS, pullRate } from '../lib/cards'
 import './Gallery.css'
 
 /**
@@ -54,9 +55,7 @@ export default function Gallery({ fresh = false }: { fresh?: boolean }) {
               <div className="gallery-caption">
                 <p className="gallery-name">{e.name}</p>
                 {e.note && <p className="gallery-note">{e.note}</p>}
-                <time className="gallery-date" dateTime={e.date}>
-                  {formatDate(e.date)}
-                </time>
+                <GalleryMeta entry={e} />
               </div>
             </li>
           ))}
@@ -89,9 +88,7 @@ function Lightbox({ entry, onClose }: { entry: GalleryEntry; onClose: () => void
         <figcaption className="gallery-caption">
           <p className="gallery-name">{entry.name}</p>
           {entry.note && <p className="gallery-note">{entry.note}</p>}
-          <time className="gallery-date" dateTime={entry.date}>
-            {formatDate(entry.date)}
-          </time>
+          <GalleryMeta entry={entry} />
         </figcaption>
       </figure>
       <button ref={closeRef} type="button" className="lightbox-close" onClick={onClose} aria-label="Close">
@@ -101,3 +98,24 @@ function Lightbox({ entry, onClose }: { entry: GalleryEntry; onClose: () => void
     document.body,
   )
 }
+
+/** The date on the left and, when known, how rare the card design is on the right. */
+function GalleryMeta({ entry }: { entry: GalleryEntry }) {
+  const card = entry.cardId ? CARDS.find((c) => c.id === entry.cardId) : undefined
+  const rate = card ? pullRate(card.id) : null
+  return (
+    <div className="gallery-meta">
+      <time className="gallery-date" dateTime={entry.date}>
+        {formatDate(entry.date)}
+      </time>
+      {card && rate !== null && (
+        <span className={`gallery-rarity is-${card.rarity}`} title={`${card.name}: found in ${formatRate(rate)} of packs`}>
+          {card.rarity === 'basic' ? '' : '★ '}
+          {formatRate(rate)} pull rate
+        </span>
+      )}
+    </div>
+  )
+}
+
+const formatRate = (rate: number) => `${Number((rate * 100).toFixed(1))}%`
