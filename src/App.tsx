@@ -54,7 +54,7 @@ async function shareFile(file: File): Promise<boolean> {
   }
 }
 
-function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGallery: () => void }) {
+function Booth({ template, onViewGallery, onDone }: { template: CardTemplate; onViewGallery: () => void; onDone: () => void }) {
   const { videoRef, status } = useCamera()
   const cardRef = useRef<HTMLDivElement>(null)
   const photoRef = useRef<HTMLCanvasElement>(null)
@@ -316,7 +316,7 @@ function Booth({ template, onViewGallery }: { template: CardTemplate; onViewGall
               </>
             ) : (
               <>
-                <button onClick={() => setMode('captured')}>Back</button>
+                <button onClick={onDone}>Done</button>
                 <button className="primary" onClick={download} disabled={saving}>
                   {saving ? 'Saving…' : canShare ? 'Save photo' : 'Download'}
                 </button>
@@ -356,6 +356,13 @@ function Photobooth() {
     setShowGallery(true)
     setStep('pack')
   }
+  // Finished with the card: back to the start screen with a fresh pack.
+  const goHome = () => {
+    setShowGallery(false)
+    setCard(null)
+    setStep('pack')
+    window.scrollTo({ top: 0 })
+  }
   return (
     <>
       <Meteors />
@@ -392,7 +399,7 @@ function Photobooth() {
             }}
           />
         )}
-        {step === 'booth' && card && <Booth template={card} onViewGallery={viewGallery} />}
+        {step === 'booth' && card && <Booth template={card} onViewGallery={viewGallery} onDone={goHome} />}
       </main>
       <a className="site-credit" href="https://laurazhao.com/" target="_blank" rel="noopener">
         laurazhao.com
