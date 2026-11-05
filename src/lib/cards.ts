@@ -110,7 +110,7 @@ export const CARDS: CardTemplate[] = [
 ]
 
 /** Chance that the rare slot in a pull is the epic card instead. */
-export const EPIC_CHANCE = 0.1
+export const EPIC_CHANCE = 0.05
 
 function shuffle<T>(items: T[]): T[] {
   const pool = [...items]
@@ -125,7 +125,7 @@ const ofRarity = (r: Rarity) => CARDS.filter((c) => c.rarity === r)
 
 /**
  * A pack pull: two different basic cards and one rare card, in random order.
- * The rare slot has a 1 in 10 chance of being the epic card.
+ * The rare slot has a 1 in 20 chance of being the epic card.
  */
 export function pullCards(): CardTemplate[] {
   const basics = shuffle(ofRarity('basic')).slice(0, 2)

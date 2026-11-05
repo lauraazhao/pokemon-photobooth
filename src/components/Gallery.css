@@ -130,7 +130,7 @@
 /* The enlarged card is a holo card (HoloCard.css); here it can also be dragged with a finger. */
 .lightbox .holo { touch-action: none; cursor: grab; }
 .lightbox-figure .gallery-caption { max-width: 420px; align-items: center; }
-.lightbox-figure .gallery-meta { width: 100%; min-width: 260px; }
+.lightbox-figure .gallery-meta { flex-direction: column; align-items: center; gap: 2px; }
 .lightbox-close {
   position: absolute;
   top: 16px;
