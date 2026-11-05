@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import Card from './Card'
+import { useHoloTilt } from '../lib/useHoloTilt'
+import './HoloCard.css'
 import { pullCards, type CardTemplate } from '../lib/cards'
 import { playLand, playSelect, startVoid } from '../lib/sfx'
 import './CardPicker.css'
@@ -72,13 +74,30 @@ export default function CardPicker({ onPick }: Props) {
               disabled={picked !== null}
               aria-label={`Use the ${card.name} card`}
             >
-              <span className="picker-card-scale" style={{ width: card.width, height: card.height }}>
-                <Card template={card} />
-              </span>
+              <PickerTilt>
+                <span className="picker-card-scale" style={{ width: card.width, height: card.height }}>
+                  <Card template={card} />
+                </span>
+              </PickerTilt>
             </button>
           </li>
         ))}
       </ul>
     </section>
+  )
+}
+
+/** The same 3D tilt and foil as the gallery's enlarged card, following the mouse while hovering. */
+function PickerTilt({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null)
+  useHoloTilt(ref, { touch: false })
+  return (
+    <div className="holo" ref={ref}>
+      <div className="holo-tilt">
+        {children}
+        <div className="holo-foil" aria-hidden="true" />
+        <div className="holo-glare" aria-hidden="true" />
+      </div>
+    </div>
   )
 }

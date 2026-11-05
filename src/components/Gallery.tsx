@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { fetchGallery, formatDate, type GalleryEntry } from '../lib/gallery'
+import HoloCard from './HoloCard'
 import './Gallery.css'
 
 /**
@@ -84,7 +85,7 @@ function Lightbox({ entry, onClose }: { entry: GalleryEntry; onClose: () => void
   return createPortal(
     <div className="lightbox" role="dialog" aria-modal="true" aria-label={`Card by ${entry.name}`} onClick={onClose}>
       <figure className="lightbox-figure" onClick={(e) => e.stopPropagation()}>
-        <img src={entry.imageUrl} alt={`Card by ${entry.name}`} width={330} height={460} />
+        <HoloCard src={entry.imageUrl} alt={`Card by ${entry.name}`} />
         <figcaption className="gallery-caption">
           <p className="gallery-name">{entry.name}</p>
           {entry.note && <p className="gallery-note">{entry.note}</p>}

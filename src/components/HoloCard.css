@@ -1,0 +1,52 @@
+/* Holo card: tilts toward the pointer, with a rainbow foil and a glare that follow it. */
+.holo {
+  --rx: 0deg;
+  --ry: 0deg;
+  --hyp: 0;
+  perspective: 900px;
+}
+.holo-tilt {
+  position: relative;
+  /* The card art's rounded corners (27px on a 660 × 920 card). */
+  border-radius: 4.1% / 2.95%;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.6s ease;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.6);
+  will-change: transform;
+}
+.holo.is-active .holo-tilt {
+  transition: transform 0.08s linear, box-shadow 0.3s ease;
+  box-shadow: calc(var(--ry) * -1.2) calc(16px + var(--rx) * 1.2) 40px rgba(0, 0, 0, 0.65);
+}
+.holo-foil, .holo-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+/* Rainbow bands that slide across as the card turns, with a fine sparkle grain. */
+.holo-foil {
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.9) 0.6px, transparent 1.2px) 0 0 / 7px 7px,
+    radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.7) 0.5px, transparent 1px) 3px 4px / 11px 11px,
+    repeating-linear-gradient(115deg,
+      hsl(0, 100%, 70%) 0%, hsl(50, 100%, 65%) 6%, hsl(120, 90%, 65%) 12%,
+      hsl(190, 100%, 65%) 18%, hsl(250, 100%, 72%) 24%, hsl(310, 100%, 70%) 30%, hsl(360, 100%, 70%) 36%)
+      calc(var(--mx) * 1.6) calc(var(--my) * 1.6) / 300% 300%;
+  mix-blend-mode: color-dodge;
+  filter: brightness(0.6) contrast(1.3) saturate(1.2);
+  opacity: calc(0.15 + var(--hyp) * 0.35);
+}
+/* A soft light where the pointer is, darker toward the far edge. */
+.holo-glare {
+  background: radial-gradient(farthest-corner circle at var(--mx) var(--my),
+    rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.35) 25%, rgba(0, 0, 0, 0.35) 90%);
+  mix-blend-mode: overlay;
+  opacity: 0;
+}
+.holo.is-active .holo-glare { opacity: calc(0.45 + var(--hyp) * 0.4); }
+@media (prefers-reduced-motion: reduce) {
+  .holo-tilt { transition: none; }
+}
