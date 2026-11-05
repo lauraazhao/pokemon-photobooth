@@ -57,7 +57,7 @@
 .gallery-caption p { margin: 0; }
 .gallery-name { font-size: 1rem; }
 /* Notes are written by visitors, so keep them in the plain, easy-to-read font. */
-.gallery-note { font-family: var(--font-plain); font-size: 0.9rem; line-height: 1.35; overflow-wrap: anywhere; }
+.gallery-note { margin-top: 4px !important; font-family: var(--font-plain); font-size: 0.9rem; line-height: 1.35; overflow-wrap: anywhere; }
 .gallery-date { font-family: var(--font-sub); font-size: 0.85rem; color: var(--text-muted); }
 /* Date on the left, the card's pull rate on the right. */
 .gallery-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }

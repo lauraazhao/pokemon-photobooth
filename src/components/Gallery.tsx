@@ -54,8 +54,8 @@ export default function Gallery({ fresh = false }: { fresh?: boolean }) {
               </button>
               <div className="gallery-caption">
                 <p className="gallery-name">{e.name}</p>
-                {e.note && <p className="gallery-note">{e.note}</p>}
                 <GalleryMeta entry={e} />
+                {e.note && <p className="gallery-note">{e.note}</p>}
               </div>
             </li>
           ))}
@@ -87,8 +87,8 @@ function Lightbox({ entry, onClose }: { entry: GalleryEntry; onClose: () => void
         <HoloCard src={entry.imageUrl} alt={`Card by ${entry.name}`} />
         <figcaption className="gallery-caption">
           <p className="gallery-name">{entry.name}</p>
-          {entry.note && <p className="gallery-note">{entry.note}</p>}
           <GalleryMeta entry={entry} />
+          {entry.note && <p className="gallery-note">{entry.note}</p>}
         </figcaption>
       </figure>
       <button ref={closeRef} type="button" className="lightbox-close" onClick={onClose} aria-label="Close">
